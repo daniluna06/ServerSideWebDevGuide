@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<!--NAME: Daniela Luna-->
+		<meta charset="utf-8">
+		<title>Passing CSC465</title>
+		<link rel="stylesheet" href="../styles/main.css">
+		<link rel="stylesheet" href="../styles/print.css" media="print">
+		<link href="https://fonts.googleapis.com/css2?family=Original+Surfer&display=swap" rel="stylesheet">
+		<style>
+			li img {
+				width: 20em;
+				height: 10em;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<img src="../images/logo.png" alt="PHP Logo">
+			<h1>CSC465 For Dummies</h1>
+			<h3>A not-so-quick, and very extensive detailed guide</h3>
+		</header>
+		<nav>
+			<ul>
+				<li><a href="../index.html">Home</a></li>
+				<li><a href="php_intro.html">PHP Intro</a></li>
+				<li><a href="forms.html">Forms</a></li>
+				<li><a href="form_processing.html">Form Processing</a></li>
+				<li><a href="external_files.html">External Files</a></li>
+				<li><a href="recursive_forms.html">Recursive Forms</a></li>
+				<li><a href="sticky_forms.html">Sticky Forms</a></li>
+				<li><a href="security.html">Security</a></li>
+				<li><a href="#" id="current">PHP x SQL</a></li>
+				<li><a href="query_strings.html">Query Strings</a></li>
+				<li><a href="pagination.html">Pagination</a></li>
+				<li><a href="cookies_and_sessions.html">Cookies and Sessions</a></li>
+				<li><a href="https.html">HTTPS</a></li>
+			</ul>
+		</nav>
+		<main>
+			<section>
+				<h2>PHP x SQL</h2>
+				<small>This guide assumes previous SQL knowledge</small>
+				<h4>PHP offers three ways to connect to and interact with a MySQL database:</h4>
+				<ol>
+					<li>MySQL extension</li>
+					<li>MySQLi</li>
+					<li>PHP Data Objects: PDO</li>
+				</ol>
+				<h4>This study guide focuses on PDO.</h4>
+				<p>PDO is an API in PHP. MySQL APIs are interfaces (set of functions) that let PHP talk to a MySQL database. When you write PHP code that sends queries to MySQL, you're using a MySQL API- the "language bridge" between PHP and the MySQL database engine. Think of PDO as a universal translator for databases.</p>
+				<ul>
+					<li>Instead of learning a new language every time you date a new database (MySQL, PostgreSQL, SQLite), PDO lets you talk to all of them using the same words.</li>
+					<li>You just say what you want, and PDO translates it for whichever database you're connected to.</li>
+				</ul>
+				<h4>The process for communicating with the database is as follows (SELECT Queries):</h4>
+					<ol>
+						<li>Connect to the MySQL database using the hostname, username, password, and database name. This generates a <em>resource</em>.<br>
+							<img src="../images/pdo_connect.png" alt="PDO Connection Example">
+							<ul>
+								<li><strong>$dbc = new PDO('mysql:host=localhost;dbname=mydb', 'user', 'pass');</strong></li>
+								<li>That's like saying, "Hi translator (PDO), connect me to this MySQL kitchen."</li>
+								<li>If later you switched to PostgreSQL: <br>
+									<strong>$dbc = new PDO('pgsql:host=localhost;dbname=mydb', 'user', 'pass');</strong>
+									Same code, just a different DSN string.
+								</li>
+							</ul>
+						</li>
+						<li>Prepare an SQL query.
+							<ul>
+								<li><strong>$sql = "SELECT * FROM table_name WHERE column_name = attribute";</strong></li>
+								<li>It's common to put these steps into a try...catch block with catch being: <br> <strong>catch(PDOEXception $e){echo $e->getMessage(); }</strong></li>
+							</ul>
+						</li>
+						<li>Execute the query and save the result.
+							<ul>
+								<li><strong>$result = $dbc->query($sql);</strong></li>
+							</ul>
+						</li>
+						<li>Extract the data from the result (usually with a <strong>foreach</strong> loop.<br>
+							<img src="../images/processing_queries.png" alt="Processing Select Queries">
+						</li>
+						<li>Close the connection to the database.
+							<ul>
+								<li><strong>$result->closeCursor();</strong></li>
+								<li>This is optional when no further queries will be executed because php will close the connection automatically.</li>
+							</ul>
+						</li>
+					</ol>
+				<h4>The process for communicating with the database is as follows (INSERT Queries):</h4>
+				<ol>
+					<li>Collect and clean the form data the user submitted.
+						<ul>
+							<li>You usually get data from <strong>$_POST</strong> (like name, email, etc.).
+							</li>
+							<li><strong>trim()</strong> strings before saving them:
+							</li>
+						</ul>
+					</li>
+					<li>Connect to the database with PDO (same as in the SELECT section).
+						<ul>
+							<li><code>$dbc = new PDO('mysql:host=localhost;dbname=mydb','user','pass');</code></li>
+							<li>Do this in a <strong>try...catch</strong> so you can catch connection errors and show a friendly message instead of white screen of death.</li>
+						</ul>
+					</li>
+
+					<li>Build the SQL INSERT string.
+						<ul>
+							<li>Basic SQL looks like:<br>
+								<code>INSERT INTO tableName (col1, col2, col3) VALUES ('string', 123, 4.56);</code>
+							</li>
+							<li>In PHP, you usually build that as a string using your variables:
+								<ul>
+									<li>
+										<code>$sql = "INSERT INTO Orders (custId, orderDateTime, instructions)
+				VALUES ($custId, NOW(), '$notes')";</code>
+									</li>
+								</ul>
+							</li>
+							<li><strong>Important rules:</strong>
+								<ul>
+									<li><strong>NOW()</strong> is a MySQL function that stores the current date+time in that row. No quotes.</li>
+									<li>If a column is <strong>AUTO_INCREMENT</strong> (example: id INT AUTO_INCREMENT PRIMARY KEY),
+										you do <em>not</em> list it in the column list, because MySQL will generate it for you.</li>
+									<li>Example with auto_increment primary key 'orderId':<br>
+										<code>INSERT INTO Orders (custId, orderDateTime, instructions)
+				VALUES ($custId, NOW(), '$notes');</code><br>
+										Notice we did <strong>not</strong> include <code>orderId</code>.
+									</li>
+									<li>
+										When you create the query string variable in php, use double quotes for
+									interpolation and put single quotes around the php variable names that contain strings. For
+									example:<br><code>$sql = " INSERT INTO JJ_contacts (firstName,...) VALUES('$firstName ', ...) ";</code>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+					<li>Run the INSERT query.
+						<ul>
+							<li>For INSERT/UPDATE/DELETE, you don't use <code>query()</code>.</li>
+							<li>You use <code>exec()</code> because <code>exec()</code> is for statements that change the database.</li>
+							<li>
+								<code>$affected = $dbc->exec($sql);</code>
+							</li>
+							<li><code>$affected</code> = the number of rows that were actually inserted.
+								<ul>
+									<li>If it inserted 1 new row, you get 1.</li>
+									<li>If something failed (ex: bad SQL), <code>exec()</code> returns <code>false</code> or throws an error if you're using exceptions.</li>
+								</ul>
+							</li>
+							<li>You can use this to check success:
+								<ul>
+									<li>
+										<code>
+									if($affected == 0){<br>
+									&nbsp;&nbsp;echo "Sorry, your order was not saved.";<br>
+									}else{<br>
+									&nbsp;&nbsp;echo "Your order was saved!";<br>
+									}
+										</code>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+
+					<li>(Optional but very common) Get the new row's ID.
+						<ul>
+							<li>If the table has an <strong>AUTO_INCREMENT</strong> primary key like <code>orderId</code>, MySQL makes a new unique ID for you automatically.</li>
+							<li>PDO lets you ask: "Hey, what ID did you just give that row?"</li>
+							<li>
+								<code>$newOrderId = $dbc->lastInsertId();</code>
+							</li>
+							<li>Why this matters:
+								<ul>
+									<li>You insert into <code>Orders</code> first...</li>
+									<li>Then you want to insert the individual pizza toppings into an <code>OrderItems</code> table and link them to that same order.</li>
+									<li>You NEED that new <code>orderId</code> to use as a foreign key in the next INSERT.</li>
+								</ul>
+							</li>
+							<li>So the flow is:
+								<ol>
+									<li>INSERT main row (customer/order info)</li>
+									<li>Get <code>$newOrderId = $dbc->lastInsertId();</code></li>
+									<li>INSERT related rows that point back to that ID</li>
+								</ol>
+							</li>
+						</ul>
+					</li>
+					<li>Confirm and/or show a success message to the user.
+						<ul>
+							<li>After saving to the database, you usually tell the user "Order placed", "Account created", etc.</li>
+						</ul>
+					</li>
+				</ol>
+
+				<h4>In summary: PDO (PHP Data Objects) is a database abstraction layer built into PHP that provides</h4>
+				<ul>
+					<li>A unified API for multiple databases (MySQL, SQLite, PostgreSQL, etc.)</li>
+					<li>Built-in prepared statements (prevent SQL injection)</li>
+					<li>Error handling via exceptions</li>
+					<li>Consistent methods (prepare(), execute(), fetch(), etc.) across all supported databases</li>
+				</ul>
+				<table>
+					<thead>
+						<tr>
+							<th colspan="2"><h4>PDO Cheat Sheet</h4></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><code>$result = $dbc->query($sql);</code></td>
+							<td> Performs a query on the database using the current database 
+								connection and SQL statement. Returns TRUE if the query runs, 
+								FALSE if not. (NOTE: TRUE is returned even if the number of rows 
+								in the result is zero.)</td>
+						</tr>
+						<tr>
+							<td><code>foreach($result as $row) { ... }</code></td>
+							<td>
+								<ul>
+									<li>Loop through each row from the SELECT.</li>
+									<li><code>$row["columnName"]</code> gives you each column.</li>
+								</ul>
+							</td>
+						</tr>
+						<tr>
+							<td><code>$row = $result->fetch();</code></td>
+							<td>Get just ONE row from the result instead of looping all of them.</td>
+						</tr>
+						<tr>
+							<td><code>$item = $result->fetchColumn();</code></td>
+							<td>Get the first column of the first row quickly (like just an ID or a count).</td>
+						</tr>
+						<tr>
+							<td><code>$numRows = $result->rowCount();</code></td>
+							<td>How many rows came back from the SELECT.</td>
+						</tr>
+						<tr>
+							<td><code>$result->closeCursor();</code></td>
+							<td>An optional (but good practice) command to free the memory taken 
+								by $result. Needed if there are subsequent queries.</td>
+						</tr>
+						<tr>
+							<td><code>$affected = $dbc->exec($sql);</code></td>
+							<td>Run INSERT/UPDATE/DELETE and get how many rows were changed.</td>
+						</tr>
+						<tr>
+							<td><code>$id = $dbc->lastInsertId();</code></td>
+							<td>After an INSERT into a table with AUTO_INCREMENT, get the new ID that was just created.</td>
+						</tr>
+					</tbody>
+				</table>
+			</section>
+			<section>
+				Test your knowledge so far with this <a href="https://forms.gle/DZndmkwrWQB3rvMb7">quiz</a>!
+				</p>
+			</section>
+		</main>
+		<footer>&copy;2025 Daniela Luna</footer>
+	</body>
+</html>
