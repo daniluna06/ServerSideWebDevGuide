@@ -1,0 +1,102 @@
+/*NAME: Daniela Luna*/
+html {
+	background-color: black;
+	background-image: url(../images/background.png);
+}
+
+body {
+	font-family: "Book Antiqua", "Times New Roman", sans-serif;
+	max-width: 1300px;
+	width: 100%;
+	margin: 0 auto;
+	padding: 0;
+	background: #fff;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+header {
+	& img {
+		float: left;
+		max-width: 4.3rem;
+		padding: 0 1.5rem 0 1rem;
+	}
+
+	& h1 {
+		font-size: 230%;
+		text-indent: 1.5rem;
+		color: #003153;
+		margin: 0;
+	}
+
+	& h3 {
+		font-family: "Original Surfer", sans-serif;
+		font-size: 125%;
+		text-indent: 1.5rem;
+		color: #003153;
+		margin-top: 0;
+		font-style: italic;
+	}
+
+	flex: 100%;
+	background-image: linear-gradient(45deg, #A4C8D8 0%, #87CEEB 75%, #003153 100%);
+}
+
+nav {
+	width: 25%;
+}
+
+nav ul {
+	list-style-type: none;
+	margin: 2em 0 2em 0;
+}
+
+nav ul li {
+	width: 100%;
+	margin-bottom: 0.0625rem;
+	padding: 0.125rem;
+}
+
+nav ul li a {
+	display: block;
+	text-decoration: none;
+	padding-left: 0.5rem;
+}
+
+nav a:link,
+nav a:visited {
+	border-left: #A4C8D8 solid 0.625rem;
+	color: #003153;
+}
+
+nav a:hover,
+nav a:active {
+	border-left-color: #A4C8D8;
+	background-color: #003153;
+	color: #fff;
+}
+
+#current {
+	border-left-color: #003153;
+}
+
+main {
+	flex: 1 1 0;
+	display: block;
+	color: #003153;
+	padding: 0.9375rem 1.562rem 1.5625rem 1.5625rem;
+	background-color: #F0F0F0;
+	/*grey*/
+}
+
+footer {
+	clear: both;
+	background-color: #A4C8D8;
+	color: #FFF;
+	padding: 0.9375rem;
+	width: 100%;
+	bottom: 0;
+	margin-bottom: 0;
+	font-size: 1rem;
+	font-weight: bold;
+}
