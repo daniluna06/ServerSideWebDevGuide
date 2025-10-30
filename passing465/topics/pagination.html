@@ -34,6 +34,44 @@
 	<main>
 		<section>
 			<h2>Pagination</h2>
+			<p><strong>Pagination</strong> is the process of limiting the number of results displayed when a list is too long to display on one page. In this case, you split the list across pages and create navigation buttons to get to the next or previous set of pages.</p>
+			<p>You use the url (query string) to say which page you want, and the database uses <code>LIMIT offset, count</code> to send back just that set of results.
+		</section>
+		<section>
+			<h4>Step-by-step guide:</h4>
+			<ol>
+				<li>
+					Determine how many items to display at a time
+					<ul>
+						<li>Add a contant <code>ROWS</code> and compute the amount of images per page:</li>
+						<img src="../images/pagination1.png" alt="Compute images per page">
+					</ul>
+				</li>
+				<li>
+					Track the current page number from thr query string
+					<img src="../images/pagination2.png" alt="Calculate the current page number">
+				</li>
+				<li>
+					Count the total number of records in the database
+					<img src="../images/pagination3.png" alt="Total number of records">
+				</li>
+				<li>
+					Compute the start/end indices for the current page
+					<img src="../images/pagination4.png" alt="Start and end indices">
+					<img src="../images/pagination5.png" alt="Start and end indices">
+				</li>
+				<li>
+					Convert to MySQL <code>offset</code> and fetch just this page
+					<img src="../images/pagination6.png" alt="Retrieving just this page">
+				</li>
+				<li>
+					Make sure this is all in a try/catch block
+				</li>
+				<li>
+					Create the previous/next navigation and output as a table
+				</li>
+				<li></li>
+			</ol>
 		</section>
 	</main>
 	<footer>&copy;2025 Daniela Luna</footer>

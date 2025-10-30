@@ -34,6 +34,39 @@
 		<main>
 			<section>
 				<h2>Query Strings</h2>
+				<p>Now that we can safely fetch and display data, you need a way to navigate between pages that use that data. That's where <strong>query strings</strong> come in.</p>
+				<p>It answers the question: "How do I pass the details of one record from one PHP page to another, and how do I handle large lists of results?"</p>
+				<p>Imagine you display images from a database in a gallery, and you loop through results and show thumbnails. Now when someone clicks a thumbnail, you want to go to a <em>details</em> page for that specific image. To tell the next page which image to show, you attach that image's ID to the link as a query string:</p>
+				<pre><code>&lt;a href="details.php?imgID=&lt;?php echo $row['image_id']; ?&gt;"&gt;View Details&lt;/a&gt;</code></pre>
+				<p>Clicking on the above code creates:
+					<ol>
+						<li>
+							the URL: <pre><code>.../details.php?imgID=2</pre></code>
+						</li>
+						<li>
+							a <code>$_GET['imgID']</code> variable that <strong>the next page (details.php) can use.</strong> On details.php, validate and run a prepared SELECT using it.
+						</li>
+					</ol>
+				</p>
+				<p>To append multiple values to a URL, use <strong>&amp</strong> between each <em>name=value</em> pair.</p>
+				<p>If you're <em>building a link yourself in PHP</em> and the value is a string, encode it for proper handling. This is where the <strong><code>urlencode()</code></strong> function comes into play.</p>
+				<p><code>urlencode()</code> safely encodes a string so it cane live inside a URL query string (after the ?), turning characters that could break the URL into percent-encoded sequences.
+					<ul>
+						<li>Space is encoded as: +</li>
+						<li>&amp is encoded as: %26</li>
+						<li>? is encoded as: %3F</li>
+						<li>etc etc etc</li>
+					</ul>
+				</p>
+			</section>
+			<section>
+				<h2>Hidden Form Fields</h2>
+				<p>Hidden form fields are another method for sending data to another page.</p>
+				<pre><code>&lt;form action="img_details.php" method="post"&gt;
+  &lt;input type="hidden" name="action" value="details"&gt;
+  &lt;input type="hidden" name="imageID" value="&lt;?= $row['imageID'] ?&gt;"&gt;
+  &lt;input type="submit" value="View Details"&gt;
+&lt;/form&gt;</code></pre>
 			</section>
 		</main>
 	</body>

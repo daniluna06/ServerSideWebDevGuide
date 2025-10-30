@@ -66,7 +66,6 @@
 						<li><code>$price = (float) $_POST['price'];</code></li>
 					</ul>
 				</li>
-
 				<li>
 					<strong>trim()</strong> removes any whitespace before/after user data.
 					<ul>
@@ -204,6 +203,27 @@
 					</table>
 					<p><em>Sanitize first, then validate again if needed. Sanitizing does NOT mean it's automatically safe for SQL — you still must use prepared statements.</em></p>
 				</li>
+				<h4>Escaping output with <code>htmlspecialchars()</code></h4>
+<p>
+  Sanitizing and validating input protects the database and your application logic, but <strong>when you output user-controlled data into HTML</strong> you must also <em>escape</em> it to prevent Cross-Site Scripting (XSS). The built-in PHP function <code>htmlspecialchars()</code> converts special characters to HTML entities so the browser renders them as text, not HTML or script.
+</p>
+
+<p><strong>Why:</strong> If a malicious user submits <code>&lt;script&gt;alert('xss')&lt;/script&gt;</code>, and you echo that directly into a page, the browser will run it. Using <code>htmlspecialchars()</code> turns it into safe text: <code>&amp;lt;script&amp;gt;alert('xss')&amp;lt;/script&amp;gt;</code>.</p>
+
+<p><strong>Examples:</strong></p>
+<pre><code>&lt;!-- 1) Output inside HTML body --&gt;
+&lt;p&gt;Comment: &lt;?php echo htmlspecialchars($comment); ?&gt;&lt;/p&gt;
+
+&lt;!-- 2) Output inside an attribute (like a value in a form field) --&gt;
+&lt;input type="text" name="firstname" value="&lt;?php echo htmlspecialchars($first); ?&gt;"&gt;
+</code></pre>
+
+<p><strong>Notes & best practices</strong></p>
+<ul>
+  <li><strong>Do not</strong> use <code>htmlspecialchars()</code> as a substitute for prepared statements- it protects HTML output, not SQL queries.</li>
+  <li>Escape on <em>output</em> (the moment you print to HTML), not on input- this keeps data flexible for other uses (APIs, CSV, etc.).</li>
+</ul>
+
 
 				<li>
 					<strong>Validate by type</strong>  
