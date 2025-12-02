@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<!--NAME: Daniela Luna-->
 	<meta charset="utf-8">
-	<title>Passing CSC465</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Passing CSC465 | PHP Intro</title>
 	<link rel="stylesheet" href="../styles/main.css">
 	<link rel="stylesheet" href="../styles/print.css" media="print">
-	<link href="https://fonts.googleapis.com/css2?family=Original+Surfer&display=swap" rel="stylesheet">
 </head>
+
 <body>
 	<header>
 		<img src="../images/logo.png" alt="PHP Logo">
@@ -18,7 +20,6 @@
 		<ul>
 			<li><a href="../index.html">Home</a></li>
 			<li><a href="#" id="current">PHP Intro</a></li>
-			<li><a href="forms.html">Forms</a></li>
 			<li><a href="form_processing.html">Form Processing</a></li>
 			<li><a href="external_files.html">External Files</a></li>
 			<li><a href="recursive_forms.html">Recursive Forms</a></li>
@@ -28,14 +29,174 @@
 			<li><a href="query_strings.html">Query Strings</a></li>
 			<li><a href="pagination.html">Pagination</a></li>
 			<li><a href="cookies_and_sessions.html">Cookies and Sessions</a></li>
-			<li><a href="https.html">HTTPS</a></li>
+			<li><a href="file_uploads.html">File Uploads</a></li>
+			<li><a href="carts.html">Shopping Carts</a></li>
+			<li><a href="api.html">APIs</a></li>
+			<li><a href="../email/index.html">Join Email List</a></li>
 		</ul>
 	</nav>
 	<main>
 		<section>
 			<h2>PHP Intro</h2>
+			<p>
+				PHP is a <strong>server-side scripting language</strong> that works together with HTML, CSS, and
+				JavaScript to create <strong>dynamic</strong> web pages.
+			</p>
+		</section>
+		<section class="material">
+			<h3>The Client-Server Model &amp; HTTP</h3>
+			<p>
+				When you type a URL and hit Enter, your browser (the <strong>client</strong>) sends an
+				<strong>HTTP request</strong> to a web server. The server processes the request and sends back an
+				<strong>HTTP response</strong> that includes:
+			</p>
+			<ul>
+				<li><strong>Response headers</strong> - information about the server and the data being sent.</li>
+				<li><strong>Response body</strong> - the actual content the browser renders (usually HTML, CSS, JS).
+				</li>
+			</ul>
+			<p>
+				HTTP stands for <em>Hypertext Transfer Protocol</em>. Request headers carry information about the client
+				(like browser type), and response headers describe the server's answer.
+			</p>
+		</section>
+		<section class="material">
+			<h3>Static vs. Dynamic Websites</h3>
+			<ul>
+				<li><strong>Static pages</strong> - plain HTML/CSS/JS. The same content is sent to every user.</li>
+				<li><strong>Dynamic pages</strong> - use a server-side language (like PHP) to change the content based
+					on data, input, or user state.</li>
+			</ul>
+			<p>
+				Browsers interpret <strong>client-side</strong> code (HTML, CSS, JavaScript). This code is visible in
+				the
+				page source and is not secure by itself.
+			</p>
+			<p>
+				With <strong>server-side</strong> code (like PHP), the web server executes the script, talks to a
+				database
+				if needed, and only sends the final HTML back. The actual PHP code <strong>does not appear</strong> in
+				the page source, which is one of the reasons it's used for more secure logic.
+			</p>
+		</section>
+		<section class="material">
+			<h3>Web Servers &amp; Software Stacks</h3>
+			<p>A web server is just a computer that responds to HTTP requests.</p>
+			<p>Your site runs on an application "stack" that usually includes:</p>
+			<ul>
+				<li>Operating system</li>
+				<li>Web server software</li>
+				<li>Database</li>
+				<li>Server-side scripting language</li>
+			</ul>
+			<p>Common stacks:</p>
+			<ul>
+				<li><strong>LAMP</strong>: Linux, Apache, MySQL, PHP (our stack in CSC465).</li>
+				<li><strong>WISA</strong>: Windows, IIS, SQL Server, ASP.NET.</li>
+				<li><strong>MERN</strong>: MongoDB, Express.js, React, Node.js.</li>
+				<li><strong>MEAN</strong>: MongoDB, Express.js, Angular, Node.js.</li>
+			</ul>
+		</section>
+		<section class="material">
+			<h3>Basic PHP Syntax</h3>
+			<ul>
+				<li>PHP is <strong>HTML-embedded</strong> - you mix PHP code inside an HTML file.</li>
+				<li>The file must use the <strong>.php</strong> extension, not <code>.html</code>.</li>
+				<li>PHP code goes inside <code>&lt;?php ... ?&gt;</code> tags.</li>
+				<li>Statements end with a <code>;</code>.</li>
+			</ul>
+		</section>
+		<section class="material">
+			<h3>Variables &amp; Data Types</h3>
+			<p>In PHP:</p>
+			<ul>
+				<li>Variables start with <code>$</code> (for example, <code>$firstName</code>).</li>
+				<li>Variable names are <strong>case-sensitive</strong>.</li>
+				<li>No type declarations: PHP figures out the type at runtime.</li>
+				<li>Names can use letters, numbers, and underscores, but can't start with a digit or use reserved names
+					(like <code>$this</code>).</li>
+			</ul>
+			<p>Common PHP data types include:</p>
+			<ul>
+				<li><strong>integer</strong></li>
+				<li><strong>double</strong></li>
+				<li><strong>boolean</strong></li>
+				<li><strong>string</strong></li>
+				<li><strong>array</strong></li>
+				<li><strong>object</strong></li>
+			</ul>
+		</section>
+		<section class="material">
+			<h3>Comments in PHP</h3>
+			<p>Three ways to write comments:</p>
+			<ul>
+				<li><code>//</code> single-line comment</li>
+				<li><code>#</code> single-line comment (shell style)</li>
+				<li><code>/* ... */</code> multi-line comment</li>
+			</ul>
+		</section>
+		<section class="material">
+			<h3>Strings, Quotes, &amp; Interpolation</h3>
+			<ul>
+				<li>Strings must start and end with the same type of quote.</li>
+				<li><strong>Single quotes</strong> treat the contents literally.</li>
+				<li><strong>Double quotes</strong> allow <strong>interpolation</strong> - variables inside the string
+					are replaced with their values.</li>
+			</ul>
+			<pre><code>&lt;?php
+$first_name = 'Jimmy';
+$last_name  = 'Halpert';
+
+// Literal (no interpolation)
+$name1 = '$first_name $last_name'; // outputs: $first_name $last_name
+
+// Interpolated
+$name2 = "Name: $first_name $last_name"; // outputs: Name: Jimmy Halpert
+?&gt;
+</code></pre>
+			<p>
+				You can also mix quotes or use the backslash <code>\</code> to "escape" a quote character inside a
+				string:
+			</p>
+			<pre>
+<code>$last_name = "O'Brien";
+$line      = 'She said, "Hi."';
+
+$last_name = 'O\'Brien';
+$line      = 'She said, \'Hi.\'';
+</code>
+</pre>
+		</section>
+		<section class="material">
+			<h3>Echo, Print, Concatenation, &amp; Escape Sequences</h3>
+			<p>
+				Echo and print both send output to the browser. You'll mainly use <code>echo</code>.
+			</p>
+			<p>
+				To glue strings together, PHP uses the <strong>concatenation operator</strong> <code>.</code>:
+			</p>
+			<pre>
+<code>&lt;?php
+$city  = 'Wilmington';
+$state = 'NC';
+
+$locale = $city . ', ' . $state; // Outputs: Wilmington, NC
+echo "Welcome to " . $locale . "!"; // Outputs: Welcome to Wilmington, NC!
+?&gt;
+</code>
+</pre>
+			<p>Some characters have special meanings in PHP strings and must be escaped with <code>\</code>:</p>
+			<ul>
+				<li><code>\"</code> double quote</li>
+				<li><code>\'</code> single quote</li>
+				<li><code>\\</code> backslash</li>
+				<li><code>\n</code> newline</li>
+				<li><code>\t</code> tab</li>
+				<li><code>\$</code> literal dollar sign</li>
+			</ul>
 		</section>
 	</main>
 	<footer>&copy;2025 Daniela Luna</footer>
 </body>
+
 </html>

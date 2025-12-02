@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<!--NAME: Daniela Luna-->
 	<meta charset="utf-8">
-	<title>Passing CSC465</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Passing CSC465 | Pagination</title>
 	<link rel="stylesheet" href="../styles/main.css">
 	<link rel="stylesheet" href="../styles/print.css" media="print">
-	<link href="https://fonts.googleapis.com/css2?family=Original+Surfer&display=swap" rel="stylesheet">
 </head>
+
 <body>
 	<header>
 		<img src="../images/logo.png" alt="PHP Logo">
@@ -18,7 +20,6 @@
 		<ul>
 			<li><a href="../index.html">Home</a></li>
 			<li><a href="php_intro.html">PHP Intro</a></li>
-			<li><a href="forms.html">Forms</a></li>
 			<li><a href="form_processing.html">Form Processing</a></li>
 			<li><a href="external_files.html">External Files</a></li>
 			<li><a href="recursive_forms.html">Recursive Forms</a></li>
@@ -28,52 +29,251 @@
 			<li><a href="query_strings.html">Query Strings</a></li>
 			<li><a href="#" id="current">Pagination</a></li>
 			<li><a href="cookies_and_sessions.html">Cookies and Sessions</a></li>
-			<li><a href="https.html">HTTPS</a></li>
+			<li><a href="file_uploads.html">File Uploads</a></li>
+			<li><a href="carts.html">Shopping Carts</a></li>
+			<li><a href="api.html">APIs</a></li>
+			<li><a href="../email/index.html">Join Email List</a></li>
 		</ul>
 	</nav>
 	<main>
 		<section>
 			<h2>Pagination</h2>
-			<p><strong>Pagination</strong> is the process of limiting the number of results displayed when a list is too long to display on one page. In this case, you split the list across pages and create navigation buttons to get to the next or previous set of pages.</p>
-			<p>You use the url (query string) to say which page you want, and the database uses <code>LIMIT offset, count</code> to send back just that set of results.
+			<p>
+				<strong>Pagination</strong> is the process of limiting how many results are displayed on a single page
+				when a
+				list is too long to show all at once. Instead of loading everything, you split the results into pages
+				and provide Next/Previous navigation.
+			</p>
+			<p>
+				In PHP + MySQL, you use:
+			</p>
+			<ul>
+				<li>the <strong>query string</strong> (for example, <code>?page=2</code>) to track which page you're on
+				</li>
+				<li>MySQL's <strong><code>LIMIT</code></strong> clause to fetch only that slice of rows</li>
+			</ul>
+			<pre><code>SELECT *
+FROM tableName
+LIMIT offset, count;</code></pre>
 		</section>
-		<section>
-			<h4>Step-by-step guide:</h4>
+		<section class="material">
+			<h3>Core Pagination Steps</h3>
+			<p>The basic process looks like this:</p>
 			<ol>
-				<li>
-					Determine how many items to display at a time
-					<ul>
-						<li>Add a contant <code>ROWS</code> and compute the amount of images per page:</li>
-						<img src="../images/pagination1.png" alt="Compute images per page">
-					</ul>
-				</li>
-				<li>
-					Track the current page number from thr query string
-					<img src="../images/pagination2.png" alt="Calculate the current page number">
-				</li>
-				<li>
-					Count the total number of records in the database
-					<img src="../images/pagination3.png" alt="Total number of records">
-				</li>
-				<li>
-					Compute the start/end indices for the current page
-					<img src="../images/pagination4.png" alt="Start and end indices">
-					<img src="../images/pagination5.png" alt="Start and end indices">
-				</li>
-				<li>
-					Convert to MySQL <code>offset</code> and fetch just this page
-					<img src="../images/pagination6.png" alt="Retrieving just this page">
-				</li>
-				<li>
-					Make sure this is all in a try/catch block
-				</li>
-				<li>
-					Create the previous/next navigation and output as a table
-				</li>
-				<li></li>
+				<li>Decide how many items you want to display on each page (for example, 6 images).</li>
+				<li>Count how many total records (or images) are in the database.</li>
+				<li>Calculate how many pages you'll need in total.</li>
+				<li>Use <code>LIMIT offset, count</code> so each page only shows its slice of results.</li>
 			</ol>
+			<p>
+				MySQL's <code>LIMIT</code> works like:
+			</p>
+			<ul>
+				<li><code>LIMIT x</code> → returns the first <code>x</code> rows of the result set.</li>
+				<li><code>LIMIT x, y</code> → skips the first <code>x</code> rows and then returns <code>y</code> rows.
+				</li>
+			</ul>
+			<p>Example:</p>
+			<ul>
+				<li><code>LIMIT 10</code>: rows 1-10</li>
+				<li><code>LIMIT 10, 10</code>: rows 11-20</li>
+			</ul>
+		</section>
+		<section class="material">
+			<h3>JJ Lab Scenario: Paginating Gallery Images</h3>
+			<p>
+				In the JJ gallery lab, there are 8 images in the folder. The requirements:
+			</p>
+			<ul>
+				<li>Show <strong>no more than 6 images</strong> per page.</li>
+				<li>On page 1, show images 1-6 and a <strong>Next</strong> button.</li>
+				<li>On page 2, show images 7-8, remove <strong>Next</strong>, and show only <strong>Previous</strong>.
+				</li>
+			</ul>
+			<p>
+				To make your code work for any page, you calculate the <strong>starting image number</strong> based on
+				the
+				current page and how many images belong on each page.
+			</p>
+			<pre><code>$pageNum    = 1;          // default page
+$imgPerPage = 6;          // images per page
+
+$startImg = ($pageNum - 1) * $imgPerPage + 1;</code></pre>
+			<p>Check the math:</p>
+			<ul>
+				<li>Page 1: <code>($pageNum - 1) * 6 + 1 = 1</code> > start at image 1</li>
+				<li>Page 2: <code>(2 - 1) * 6 + 1 = 7</code> > start at image 7</li>
+				<li>If there were 15 images, page 3 would start at image 13</li>
+			</ul>
+		</section>
+		<section class="material">
+			<h3>Getting the Current Page from the Query String</h3>
+			<p>
+				The page number is usually passed in the URL like: <code>gallery.php?page=2</code>.
+				You can safely read it like this:
+			</p>
+			<pre><code>$pageNum = 1; // default
+if (isset($_GET['page']) &amp;&amp; is_numeric($_GET['page']) &amp;&amp; $_GET['page'] &gt; 0) {
+    $pageNum = (int) $_GET['page'];
+}</code></pre>
+			<p>
+				Later, after you know the total number of pages, you can also clamp <code>$pageNum</code> so it doesn't
+				go past the last page.
+			</p>
+		</section>
+		<section class="material">
+			<h3>Counting Total Records &amp; Total Pages</h3>
+			<p>
+				First, count how many images (or rows) exist in the database using <code>COUNT(*)</code>:
+			</p>
+			<p>In code, that looks something like:</p>
+			<pre><code>$sql  = "SELECT COUNT(*) FROM JJ_images";
+$result   = $dbc-&gt;query($sql);
+$numImages = $result-&gt;fetchColumn();
+
+// How many pages total?
+$totalPages = ceil($numImages / $imgPerPage);</code></pre>
+
+			<p>
+				Now that you know <code>$totalPages</code>, you can ensure the requested page is valid:
+			</p>
+
+			<pre><code>if ($pageNum &gt; $totalPages) {
+    $pageNum = $totalPages;
+}</code></pre>
+		</section>
+		<section class="material">
+			<h3>Calculating OFFSET for LIMIT</h3>
+			<p>
+				MySQL uses a zero-based <strong>offset</strong> in <code>LIMIT</code>, so instead of using
+				<code>$startImg</code> directly, you convert it:
+			</p>
+
+			<pre><code>$offset = ($pageNum - 1) * $imgPerPage;
+
+// Then use in your SELECT:
+$sql = "SELECT *
+        FROM JJ_images
+        ORDER BY image_id
+        LIMIT $offset, $imgPerPage";</code></pre>
+
+			<p>
+				This retrieves only the rows for the current page. For example:
+			</p>
+			<ul>
+				<li>Page 1: <code>offset = 0</code>, <code>LIMIT 0, 6</code> > rows 1-6</li>
+				<li>Page 2: <code>offset = 6</code>, <code>LIMIT 6, 6</code> > rows 7-12 (or up to however many exist)
+				</li>
+			</ul>
+			<img src="../images/pagination6.png" alt="Retrieving just this page">
+		</section>
+		<section class="material">
+			<h3>Using try...catch with Pagination Queries</h3>
+			<p>
+				Database work should be wrapped in a <strong>try...catch</strong> to avoid white screen of sadness and
+				show a
+				helpful message instead:
+			</p>
+
+			<pre><code>try {
+    $result = $dbc-&gt;query($sql);
+} catch (PDOException $e) {
+    echo $e-&gt;getMessage();
+}</code></pre>
+
+			<p>
+				Then you loop through <code>$result</code> to output each image for the current page.
+			</p>
+		</section>
+		<section class="material">
+			<h3>Previous / Next Page Navigation</h3>
+			<p>
+				The navigation depends on <code>$pageNum</code> and <code>$totalPages</code>:
+			</p>
+			<ul>
+				<li>On the <strong>first page</strong>, show only <em>Next</em> (no Previous).</li>
+				<li>On a <strong>middle page</strong>, show both <em>Previous</em> and <em>Next</em>.</li>
+				<li>On the <strong>last page</strong>, show only <em>Previous</em>.</li>
+			</ul>
+
+			<pre><code>// Previous link
+if ($pageNum &gt; 1) {
+    $prev = $pageNum - 1;
+    echo "&lt;a href='gallery.php?page=$prev'&gt;Previous&lt;/a&gt; ";
+}
+
+// Next link
+if ($pageNum &lt; $totalPages) {
+    $next = $pageNum + 1;
+    echo "&lt;a href='gallery.php?page=$next'&gt;Next&lt;/a&gt;";
+}</code></pre>
+
+			<p>
+				The goal is to write this logic once so it works for page 1, the last page, and any page in between.
+			</p>
+		</section>
+		<section class="material">
+			<h3>Keeping Table Layout Valid (Blank &lt;td&gt; Cells)</h3>
+			<p>
+				Your gallery images are typically displayed in an HTML table with a fixed number of columns per row
+				(for example, 3 images per row). Valid HTML requires that each row has the <strong>same number of
+					<code>&lt;td&gt;</code> cells</strong>.
+			</p>
+
+			<p>What if there are 9 images and the table displays 3 per row?</p>
+			<ul>
+				<li>Rows 1 &amp; 2: 3 images each (perfect)</li>
+				<li>Row 3: only 3rd image might be alone if the math doesn't align</li>
+			</ul>
+			<p>
+				In the JJ lab, when there are fewer images than needed to fill the last row, you output
+				<strong>blank cells</strong> to keep the table valid:
+			</p>
+
+			<pre><code>$imagesPerRow = 3;
+$count       = 0;
+
+echo "&lt;tr&gt;";
+foreach ($images as $img) {
+    echo "&lt;td&gt;...image html here...&lt;/td&gt;";
+    $count++;
+
+    if ($count % $imagesPerRow == 0) {
+        echo "&lt;/tr&gt;&lt;tr&gt;";
+    }
+}
+
+// If the last row isn't full, add empty cells
+$remainder = $count % $imagesPerRow;
+if ($remainder != 0) {
+    $blankCells = $imagesPerRow - $remainder;
+    for ($i = 0; $i &lt; $blankCells; $i++) {
+        echo "&lt;td&gt;&amp;nbsp;&lt;/td&gt;";
+    }
+    echo "&lt;/tr&gt;";
+}</code></pre>
+
+			<p>
+				This way, your HTML stays valid and your layout stays cute and consistent, even when the last page has
+				only
+				1-2 images.
+			</p>
+		</section>
+		<section class="material">
+			<h3>Where to Go Next</h3>
+			<p>
+				With pagination, you now know how to:
+			</p>
+			<ul>
+				<li>Limit SQL results with <code>LIMIT offset, count</code></li>
+				<li>Use <code>COUNT(*)</code> to compute total pages</li>
+				<li>Drive page navigation using the query string</li>
+				<li>Handle layout quirks like partial rows in tables</li>
+			</ul>
 		</section>
 	</main>
+
 	<footer>&copy;2025 Daniela Luna</footer>
 </body>
+
 </html>

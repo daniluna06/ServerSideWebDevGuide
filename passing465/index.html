@@ -1,13 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<!--NAME: Daniela Luna-->
 	<meta charset="utf-8">
+	<meta name="description"
+		content="CSC465 for Dummies: an in-depth guide to PHP, forms, security, SQL, pagination, and more to help you pass the course.">
+	<meta name="keywords"
+		content="PHP, forms, external files, recursive forms, sticky forms, security, sql, query strings, pagination, cookies, sessions, https, web development">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Passing CSC465</title>
 	<link rel="stylesheet" href="styles/main.css">
 	<link rel="stylesheet" href="styles/print.css" media="print">
-	<link href="https://fonts.googleapis.com/css2?family=Original+Surfer&display=swap" rel="stylesheet">
 </head>
+
 <body>
 	<header>
 		<img src="images/logo.png" alt="PHP Logo">
@@ -18,31 +24,110 @@
 		<ul>
 			<li><a href="#" id="current">Home</a></li>
 			<li><a href="topics/php_intro.html">PHP Intro</a></li>
-			<li><a href="topics/forms.html">Forms</a></li>
 			<li><a href="topics/form_processing.html">Form Processing</a></li>
 			<li><a href="topics/external_files.html">External Files</a></li>
 			<li><a href="topics/recursive_forms.html">Recursive Forms</a></li>
 			<li><a href="topics/sticky_forms.html">Sticky Forms</a></li>
 			<li><a href="topics/security.html">Security</a></li>
-			<li><a href="topics/query_strings.html">PHP x SQL</a></li>
-			<li><a href="query_strings.html">Query Strings</a></li>
+			<li><a href="topics/php_sql.html">PHP x SQL</a></li>
+			<li><a href="topics/query_strings.html">Query Strings</a></li>
 			<li><a href="topics/pagination.html">Pagination</a></li>
 			<li><a href="topics/cookies_and_sessions.html">Cookies and Sessions</a></li>
-			<li><a href="topics/https.html">HTTPS</a></li>
+			<li><a href="topics/file_uploads.html">File Uploads</a></li>
+			<li><a href="topics/carts.html">Shopping Carts</a></li>
+			<li><a href="topics/api.html">APIs</a></li>
+			<li><a href="email/index.html">Join Email List</a></li>
 		</ul>
 	</nav>
 	<main>
 		<section>
-			<p>
-				<h4>The Roman philosopher Seneca once said:</h4>	
-			</p>
+			<h3>The Roman philosopher Seneca once said:</h3>
 			<blockquote>"While we teach, we learn."</blockquote>
-			<p>
-				<h4>This is my attempt at teaching PHP & SQL in order to better perform in future exams for this course.</h4>
-			</p>
-			<h3>**Click on the Cookies and Sessions block on the left to see how these pages will be laid out**</h3>
+			<h3>
+				With that in mind, I created this extensive guide to help myself pass CSC465
+				and master PHP & SQL in order to better perform in future exams for this course.
+			</h3>
+		</section>
+		<section>
+			<h2>What You Can Expect to Learn:</h2>
+			<article class="material">
+				<h3>PHP Intro</h3>
+				<p>What PHP is, how it works with HTML, and the basics of syntax, variables, and output.</p>
+				<p><em>Click on this section title in the navigation menu to learn more.</em></p>
+			</article>
+			<article class="material">
+				<h3>Form Processing</h3>
+				<p>How PHP reads form data with <code>$_GET</code> and <code>$_POST</code>, validates input, and sends
+					responses.</p>
+				<p><em>Click on this section title in the navigation menu to learn more.</em></p>
+			</article>
+			<article class="material">
+				<h3>External Files</h3>
+				<p>Using <code>include</code> and <code>require</code> to split your code into reusable files like
+					headers and footers.</p>
+				<p><em>Click on this section title in the navigation menu to learn more.</em></p>
+			</article>
+			<article class="material">
+				<h3>Recursive Forms</h3>
+				<p>Forms that submit back to themselves so the same PHP script both displays and processes the form.
+				</p>
+				<p><em>Click on this section title in the navigation menu to learn more.</em></p>
+			</article>
+			<article class="material">
+				<h3>Sticky Forms</h3>
+				<p>Keeping user-entered values in form fields after validation errors so users don't have to retype
+					everything.</p>
+				<p><em>Click on this section title in the navigation menu to learn more.</em></p>
+			</article>
+			<article class="material">
+				<h3>Security</h3>
+				<p>Identifying common risks (like invalid input, injection, and XSS) and learning safer coding
+					practices in PHP.</p>
+				<p><em>Click on this section title in the navigation menu to learn more.</em></p>
+			</article>
+			<article class="material">
+				<h3>PHP x SQL</h3>
+				<p>Connecting PHP to a database, writing SQL queries, and sending/receiving data from MySQL.</p>
+				<p><em>Click on this section title in the navigation menu to learn more.</em></p>
+			</article>
+			<article class="material">
+				<h3>Query Strings</h3>
+				<p>Using the information in URLs (after the <code>?</code>) to pass data between pages with
+					<code>$_GET</code>.
+				</p>
+				<p><em>Click on this section title in the navigation menu to learn more.</em></p>
+			</article>
+			<article class="material">
+				<h3>Pagination</h3>
+				<p>Breaking long lists of results into pages with "next" and "previous" links instead of one huge
+					page.</p>
+				<p><em>Click on this section title in the navigation menu to learn more.</em></p>
+			</article>
+			<article class="material">
+				<h3>Cookies and Sessions</h3>
+				<p>Saving small pieces of data to remember users across multiple page requests and logins.</p>
+				<p><em>Click on this section title in the navigation menu to learn more.</em></p>
+			</article>
+			<article class="material">
+				<h3>File Uploads</h3>
+				<p>Letting users upload files, storing them safely, and working with images and security
+					constraints.</p>
+				<p><em>Click on this section title in the navigation menu to learn more.</em></p>
+			</article>
+			<article class="material">
+				<h3>Shopping Carts</h3>
+				<p>Tracking items a user wants to buy, updating quantities, and calculating totals across pages.</p>
+				<p><em>Click on this section title in the navigation menu to learn more.</em></p>
+			</article>
+			<article class="material">
+				<h3>APIs</h3>
+				<p>Using PHP to talk to other web services.</p>
+				<p><em>Click on this section title in the navigation menu to learn more.</em></p>
+			</article>
 		</section>
 	</main>
 	<footer>&copy;2025 Daniela Luna</footer>
+	<script src="js/print.js"></script>
 </body>
+
 </html>

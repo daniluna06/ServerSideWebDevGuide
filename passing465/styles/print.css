@@ -1,12 +1,15 @@
 html {
 	background-image: none;
 }
+
 body {
 	font-family: serif;
 }
+
 nav {
 	display: none;
 }
-h1{
-	color: red;
+
+h1 {
+	color: black;
 }

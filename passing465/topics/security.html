@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<!--NAME: Daniela Luna-->
 	<meta charset="utf-8">
-	<title>Passing CSC465</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Passing CSC465 | Security</title>
 	<link rel="stylesheet" href="../styles/main.css">
 	<link rel="stylesheet" href="../styles/print.css" media="print">
-	<link href="https://fonts.googleapis.com/css2?family=Original+Surfer&display=swap" rel="stylesheet">
 </head>
+
 <body>
 	<header>
 		<img src="../images/logo.png" alt="PHP Logo">
@@ -18,7 +20,6 @@
 		<ul>
 			<li><a href="../index.html">Home</a></li>
 			<li><a href="php_intro.html">PHP Intro</a></li>
-			<li><a href="forms.html">Forms</a></li>
 			<li><a href="form_processing.html">Form Processing</a></li>
 			<li><a href="external_files.html">External Files</a></li>
 			<li><a href="recursive_forms.html">Recursive Forms</a></li>
@@ -28,22 +29,33 @@
 			<li><a href="query_strings.html">Query Strings</a></li>
 			<li><a href="pagination.html">Pagination</a></li>
 			<li><a href="cookies_and_sessions.html">Cookies and Sessions</a></li>
-			<li><a href="https.html">HTTPS</a></li>
+			<li><a href="file_uploads.html">File Uploads</a></li>
+			<li><a href="carts.html">Shopping Carts</a></li>
+			<li><a href="api.html">APIs</a></li>
+			<li><a href="../email/index.html">Join Email List</a></li>
 		</ul>
 	</nav>
 	<main>
 		<section>
 			<h2>Security</h2>
 			<p>
-			An <strong>SQL injection attack</strong> occurs when an attacker tries to insert conditions into an SQL query in an attempt to expose or corrupt the data in the database.
+				An <strong>SQL injection attack</strong> occurs when an attacker tries to insert conditions into an SQL
+				query in an attempt to expose or corrupt the data in the database.
 			</p>
 			<p>
-			The pattern for an SQL query is: <code>SELECT * FROM users WHERE username = 'xyz' AND password = 'abc'</code>
+				The pattern for an SQL query is:
+				<code>SELECT * FROM users WHERE username = 'xyz' AND password = 'abc'</code>
 			</p>
-			<p>All an attacker needs to do is inject as extra condition like this: <code>SELECT * FROM users WHERE username = 'xyz' AND password = 'abc' <strong>OR 1 = 1</strong></code><br><br>
-			That extra condition means that the password = abc OR 1 = 1. Only one of those has to be true. Since 1 = 1 is true, the condition is met and login is successful. <em>SQL injection relies on quotes and other control characters not being properly escaped when part of the query is derived from a variable or user input.</em> 
+			<p>
+				All an attacker needs to do is inject an extra condition like this:
+				<code>SELECT * FROM users WHERE username = 'xyz' AND password = 'abc' <strong>OR 1 = 1</strong></code>
+				<br><br>
+				That extra condition means that the password = abc OR 1 = 1. Only one of those has to be true. Since
+				1 = 1 is true, the condition is met and login is successful.
+				<em>SQL injection relies on quotes and other control characters not being properly escaped when part of
+					the query is derived from a variable or user input.</em>
 			</p>
-			<h4>Three methods for preventing SQL Injections are:</h4>
+			<h3>Three methods for preventing SQL Injections are:</h3>
 			<ol>
 				<li>Validating and filtering all data to be used in queries
 					<ul>
@@ -52,12 +64,16 @@
 						<li>Double-check logic bounds</li>
 					</ul>
 				</li>
-				<li>Used prepared statements</li>
+				<li>Use prepared statements</li>
 				<li>Don't show detailed error messages</li>
 			</ol>
 		</section>
-			<h4>1. Validating and filtering all input</h4>
-			<p>Never trust user input. Clean it and prove it's safe <em>before</em> you insert it into the database or include it in a query.
+
+		<section class="material">
+			<h3>1. Validating and Filtering All Input</h3>
+			<p>
+				Never trust user input. Clean it and prove it's safe <em>before</em> you insert it into the database or
+				include it in a query.
 			</p>
 			<ul>
 				<li>
@@ -69,23 +85,34 @@
 				<li>
 					<strong>trim()</strong> removes any whitespace before/after user data.
 					<ul>
-						<li>If a user enters "&nbsp;Daniela" with a leading space, that value (with the space) would get saved.
-						Later "Daniela" ≠ "&nbsp;Daniela". <code>trim()</code> prevents this problem.</li>
+						<li>
+							If a user enters "&nbsp;Daniela" with a leading space, that value (with the space) would get
+							saved.
+							Later "Daniela" ≠ "&nbsp;Daniela". <code>trim()</code> prevents this problem.
+						</li>
 						<li><code>$first = trim($_POST['firstName']);</code></li>
 					</ul>
 				</li>
-
 				<li>
-					<strong>PHP filter_var() with validation filters</strong>  
-					<p><strong>filter_var()</strong> is a built-inPHP function used with both sanitation and validation filters that takes some value (usually user input) and runs it through a the chosen filter.<br>
-					Syntax: <code>$result = filter_var($value, FILTER);</code>
-					<ul>
-						<li>$value: the thing you want to check or clean (like $_POST['email'])</li>
-						<li>filter: which filter you want to apply (like FILTER_VALIDATE_EMAIL or FILTER_SANITIZE_EMAIL)</li>
-					</ul>
+					<strong>PHP filter_var() with validation filters</strong>
+					<p>
+						<strong>filter_var()</strong> is a built-in PHP function used with both sanitation and
+						validation
+						filters that takes some value (usually user input) and runs it through the chosen filter.<br>
+						Syntax: <code>$result = filter_var($value, FILTER);</code>
 					</p>
-					<p>Validation filters check that the data really is what you expect (email, int, URL, etc.). These usually go in an <code>if</code> statement.</p>
-
+					<ul>
+						<li><code>$value</code>: the thing you want to check or clean (like
+							<code>$_POST['email']</code>)
+						</li>
+						<li><code>FILTER</code>: which filter you want to apply (like
+							<code>FILTER_VALIDATE_EMAIL</code> or <code>FILTER_SANITIZE_EMAIL</code>)
+						</li>
+					</ul>
+					<p>
+						Validation filters check that the data really is what you expect (email, int, URL, etc.). These
+						usually go in an <code>if</code> statement.
+					</p>
 					<table>
 						<caption><strong>Common PHP Validation Filters</strong></caption>
 						<thead>
@@ -124,20 +151,25 @@
 							<tr>
 								<td><code>FILTER_VALIDATE_REGEXP</code></td>
 								<td>Checks if it matches a custom regex you provide.</td>
-								<td><code>$ok = filter_var($user, FILTER_VALIDATE_REGEXP, ['options' =&gt; ['regexp' =&gt; '/^[A-Za-z0-9_]{3,20}$/']]);</code></td>
+								<td><code>$ok = filter_var($user, FILTER_VALIDATE_REGEXP, ['options' =&gt; ['regexp' =&gt; '/^[A-Za-z0-9_]{3,20}$/']]);</code>
+								</td>
 							</tr>
 							<tr>
 								<td><code>FILTER_VALIDATE_URL</code></td>
-								<td>Checks if it’s a valid URL.</td>
+								<td>Checks if it's a valid URL.</td>
 								<td><code>$url = filter_var($input, FILTER_VALIDATE_URL);</code></td>
 							</tr>
 						</tbody>
 					</table>
-					<p><em>Tip: Trim first, then validate. If validation fails (returns false), reject the input.</em></p>
+					<p>
+						<em>Tip: Trim first, then validate. If validation fails (returns false), reject the input.</em>
+					</p>
 				</li>
 				<li>
-					<strong>PHP filter_var() with sanitation filters</strong>  
-					<p>Sanitation filters clean the data by removing or escaping illegal / dangerous characters, so it’s safer to store or use.
+					<strong>PHP filter_var() with sanitation filters</strong>
+					<p>
+						Sanitation filters clean the data by removing or escaping illegal / dangerous characters, so
+						it's safer to store or use.
 					</p>
 					<table>
 						<caption><strong>Common PHP Sanitation Filters</strong></caption>
@@ -161,12 +193,14 @@
 							</tr>
 							<tr>
 								<td><code>FILTER_SANITIZE_MAGIC_QUOTES</code></td>
-								<td>Adds slashes to quotes (<code>addslashes()</code>-like behavior). (Legacy style.)</td>
+								<td>Adds slashes to quotes (<code>addslashes()</code>-like behavior).
+								</td>
 								<td><code>$clean = filter_var($input, FILTER_SANITIZE_MAGIC_QUOTES);</code></td>
 							</tr>
 							<tr>
 								<td><code>FILTER_SANITIZE_NUMBER_FLOAT</code></td>
-								<td>Removes everything except digits, plus/minus, and optionally decimal/scientific notation.</td>
+								<td>Removes everything except digits, plus/minus, and optionally decimal/scientific
+									notation.</td>
 								<td><code>$num = filter_var($input, FILTER_SANITIZE_NUMBER_FLOAT);</code></td>
 							</tr>
 							<tr>
@@ -181,7 +215,7 @@
 							</tr>
 							<tr>
 								<td><code>FILTER_SANITIZE_SPECIAL_CHARS</code></td>
-								<td>Escapes special HTML characters so they’re safe to output on a page.</td>
+								<td>Escapes special HTML characters so they're safe to output on a page.</td>
 								<td><code>$safe = filter_var($input, FILTER_SANITIZE_SPECIAL_CHARS);</code></td>
 							</tr>
 							<tr>
@@ -197,145 +231,187 @@
 							<tr>
 								<td><code>FILTER_CALLBACK</code></td>
 								<td>Runs your own custom function to sanitize however you want.</td>
-								<td><code>$out = filter_var($input, FILTER_CALLBACK, ['options' =&gt; 'myCleaner']);</code></td>
+								<td><code>$out = filter_var($input, FILTER_CALLBACK, ['options' =&gt; 'myCleaner']);</code>
+								</td>
 							</tr>
 						</tbody>
 					</table>
-					<p><em>Sanitize first, then validate again if needed. Sanitizing does NOT mean it's automatically safe for SQL — you still must use prepared statements.</em></p>
+					<p>
+						<em>Sanitize first, then validate again if needed. Sanitizing does NOT mean it's automatically
+							safe for SQL; you still must use prepared statements.</em>
+					</p>
 				</li>
-				<h4>Escaping output with <code>htmlspecialchars()</code></h4>
-<p>
-  Sanitizing and validating input protects the database and your application logic, but <strong>when you output user-controlled data into HTML</strong> you must also <em>escape</em> it to prevent Cross-Site Scripting (XSS). The built-in PHP function <code>htmlspecialchars()</code> converts special characters to HTML entities so the browser renders them as text, not HTML or script.
-</p>
-
-<p><strong>Why:</strong> If a malicious user submits <code>&lt;script&gt;alert('xss')&lt;/script&gt;</code>, and you echo that directly into a page, the browser will run it. Using <code>htmlspecialchars()</code> turns it into safe text: <code>&amp;lt;script&amp;gt;alert('xss')&amp;lt;/script&amp;gt;</code>.</p>
-
-<p><strong>Examples:</strong></p>
-<pre><code>&lt;!-- 1) Output inside HTML body --&gt;
-&lt;p&gt;Comment: &lt;?php echo htmlspecialchars($comment); ?&gt;&lt;/p&gt;
-
-&lt;!-- 2) Output inside an attribute (like a value in a form field) --&gt;
-&lt;input type="text" name="firstname" value="&lt;?php echo htmlspecialchars($first); ?&gt;"&gt;
-</code></pre>
-
-<p><strong>Notes & best practices</strong></p>
-<ul>
-  <li><strong>Do not</strong> use <code>htmlspecialchars()</code> as a substitute for prepared statements- it protects HTML output, not SQL queries.</li>
-  <li>Escape on <em>output</em> (the moment you print to HTML), not on input- this keeps data flexible for other uses (APIs, CSV, etc.).</li>
-</ul>
-
-
+			</ul>
+		</section>
+		<section class="material">
+			<h3>Escaping Output with <strong>htmlspecialchars()</strong></h3>
+			<p>
+				Sanitizing and validating input protects the database and your application logic, but
+				<strong>when you output user-controlled data into HTML</strong> you must also <em>escape</em> it to
+				prevent
+				Cross-Site Scripting (XSS). The built-in PHP function <code>htmlspecialchars()</code> converts special
+				characters to HTML entities so the browser renders them as text, not HTML or script.
+			</p>
+			<p>
+				<strong>Why:</strong> If a malicious user submits
+				<code>&lt;script&gt;alert('xss')&lt;/script&gt;</code>, and you echo that directly into a page, the
+				browser will run it. Using <code>htmlspecialchars()</code> turns it into safe text:
+				<code>&amp;lt;script&amp;gt;alert('xss')&amp;lt;/script&amp;gt;</code>.
+			</p>
+			<p><strong>Notes &amp; best practices</strong></p>
+			<ul>
+				<li><strong>Do not</strong> use <code>htmlspecialchars()</code> as a substitute for prepared statements;
+					it protects HTML output, not SQL queries.</li>
+				<li>Escape on <em>output</em> (the moment you print to HTML), not on input - this keeps data flexible
+					for other uses (APIs, CSV, etc.).</li>
+			</ul>
+		</section>
+		<section class="material">
+			<h3>Other Validation &amp; Domain Checks</h3>
+			<ul>
 				<li>
-					<strong>Validate by type</strong>  
-					<p>PHP also has functions that let you test a variable’s type and return TRUE or FALSE:</p>
-					<img src="../images/validating.png" alt="PHP type check functions">
+					<strong>Validate by type</strong>
+					<p>
+						PHP also has functions that let you test a variable's type and return TRUE or FALSE:
+					</p>
+					<p>
+						<img src="../images/validating.png" alt="PHP type check functions">
+					</p>
 				</li>
-
 				<li>
-					<strong>Check for required domain values</strong>  
+					<strong>Check for required domain values</strong>
 					<p>Example: require positive numbers before processing an order.</p>
 					<ul>
 						<li>
 							<code>
-								if ( ($quantity > 0) && ($price > 0) && ($tax > 0) ) {<br>
-								&nbsp;&nbsp;// safe to continue...<br>
-								}
-							</code>
+							if ( ($quantity &gt; 0) &amp;&amp; ($price &gt; 0) &amp;&amp; ($tax &gt; 0) ) {<br>
+							&nbsp;&nbsp;// safe to continue...<br>
+							}
+						</code>
 						</li>
 					</ul>
 				</li>
 			</ul>
 		</section>
-		<section>
-			<h4>2. Using prepared statements</h4>
+		<section class="material">
+			<h3>2. Using Prepared Statements</h3>
 			<p>
-				When you write a normal SQL query in PHP, you might be tempted to directly stick PHP variables into the SQL string, like this:$q = "SELECT * FROM users WHERE id = $id";<br><br>
-				Here, $id is literally dropped into the query. This is unsafe (vulnerable to SQL injections) and also doesn't let the database optimize the query.When you send a query to a database, two big steps happen before it actually fetches data:
-				<ol>
-					<li><strong>Parse & Plan</strong></li>
-						<ul>
-							<li>
-								The database has to read your SQL string, figure out what tables and columns you mean, and decide the best way to get that data (called a query plan).
-							</li>
-							<li>
-								This takes some work (like translating English into a set of instructions).
-							</li>
-						</ul>
-					<li><strong>Execute</strong></li>
-						<ul>
-							<li>
-								Once it has the plan, it plugs in the actual values and fetches the results.
-							</li>
-						</ul>
-				</ol>
+				When you write a normal SQL query in PHP, you might be tempted to directly stick PHP variables into the
+				SQL
+				string, like this: <code>$q = "SELECT * FROM users WHERE id = $id";</code>
 			</p>
 			<p>
-				With prepared statements, you instead give the database a template by defining the query string and replacing variable values with ? or named place holders. <br>
-				Prepared statements can be used for INSERT, UPDATE, DELETE, and SELECT queries.
+				Here, <code>$id</code> is literally dropped into the query. This is unsafe (vulnerable to SQL
+				injections) and also doesn't let the database optimize the query.
 			</p>
 			<p>
-				<strong>Steps to preparing a statement:</strong>
-				<ol>
-					<li>
-						Define the query string and replace variable values with either question marks or named placeholders starting with the : symbol
-						<ul>
-							<li><code>$sql = "SELECT * FROM users WHERE id = $id";</code> becomes...</li>
-							<li><code>$sql = "SELECT * FROM users WHERE id = ?";</code></li>
-							<strong>OR</strong>
-							<li><code>$sql = "SELECT * FROM users WHERE id = :id";</code></li>
-						</ul>
-					</li>
-					<li>
-						Prepare the statement
-						<ul>
-							<li><code>$stmt = $dbc->prepare($sql);</code></li>
-						</ul>
-						MySQL parses the query, makes sure that the syntax is correct, validate table and column names.
-					</li>
-					<li>
-						Bind the PHP variables to the query's placeholders:
-						<ul>
-							For question mark placeholders:
-							<li><code>$stmt->bindParam(1, $id)</code></li>
-							<li><code>$stmt->bindParam(2, $x)</code></li>
-							<li><code>$stmt->bindParam(3, $y)</code></li>
-							For named placeholders:
-							<li><code>$stmt->bindParam(':id', $id)</code></li>
-						</ul>
-					</li>
-					<li>
-						Execute the statement
-						<ul>
-							<li><code>$stmt->execute();</code></li>
-						</ul>
-					</li>
-					<li>
-						Retrieve the result or count rows in the result
-						<ul>
-							<li><code>$result = $stmt->fetch();</code></li>
-							<strong>OR</strong>
-							<li><code>$numRows = $stmt->rowCount();</code></li>
-						</ul>
-					</li>
-					<li>
-						Free the result
-						<ul>
-							<li><code>$stmt->closeCursor();</code></li>
-						</ul>
-					</li>
-				</ol>
+				When you send a query to a database, two big steps happen before it actually fetches data:
 			</p>
+			<ol>
+				<li>
+					<strong>Parse &amp; Plan</strong>
+					<ul>
+						<li>The database has to read your SQL string, figure out what tables and columns you mean, and
+							decide
+							the best way to get that data (called a query plan).</li>
+						<li>This takes some work (like translating English into a set of instructions).</li>
+					</ul>
+				</li>
+				<li>
+					<strong>Execute</strong>
+					<ul>
+						<li>Once it has the plan, it plugs in the actual values and fetches the results.</li>
+					</ul>
+				</li>
+			</ol>
 			<p>
-				Prepared statements are more secure because the query and the data are sent to the SQL server <em>separately</em>. The root of SQL injection attacks is mixing of the code and the data.
+				With prepared statements, you instead give the database a template by defining the query string and
+				replacing
+				variable values with <code>?</code> or named placeholders. Prepared statements can be used for
+				<code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>, and <code>SELECT</code> queries.
+			</p>
+			<p><strong>Steps to preparing a statement:</strong></p>
+			<ol>
+				<li>
+					Define the query string and replace variable values with either question marks or named placeholders
+					starting with the <code>:</code> symbol.
+					<ul>
+						<li><code>$sql = "SELECT * FROM users WHERE id = $id";</code> becomes…</li>
+						<li><code>$sql = "SELECT * FROM users WHERE id = ?";</code></li>
+						<li><strong>OR</strong></li>
+						<li><code>$sql = "SELECT * FROM users WHERE id = :id";</code></li>
+					</ul>
+				</li>
+				<li>
+					Prepare the statement
+					<ul>
+						<li><code>$stmt = $dbc->prepare($sql);</code></li>
+					</ul>
+					<p>
+						MySQL parses the query, makes sure that the syntax is correct, validates table and column names.
+					</p>
+				</li>
+				<li>
+					Bind the PHP variables to the query's placeholders:
+					<ul>
+						<li><strong>For question mark placeholders:</strong></li>
+						<li><code>$stmt->bindParam(1, $id);</code></li>
+						<li><code>$stmt->bindParam(2, $x);</code></li>
+						<li><code>$stmt->bindParam(3, $y);</code></li>
+						<li><strong>For named placeholders:</strong></li>
+						<li><code>$stmt->bindParam(':id', $id);</code></li>
+					</ul>
+				</li>
+				<li>
+					Execute the statement
+					<ul>
+						<li><code>$stmt->execute();</code></li>
+					</ul>
+				</li>
+				<li>
+					Retrieve the result or count rows in the result
+					<ul>
+						<li><code>$result = $stmt->fetch();</code></li>
+						<li><strong>OR</strong></li>
+						<li><code>$numRows = $stmt->rowCount();</code></li>
+					</ul>
+				</li>
+				<li>
+					Free the result
+					<ul>
+						<li><code>$stmt->closeCursor();</code></li>
+					</ul>
+				</li>
+			</ol>
+			<p>
+				Prepared statements are more secure because the query and the data are sent to the SQL server
+				<em>separately</em>. The root of SQL injection attacks is the mixing of the code and the data.
 			</p>
 		</section>
-		<section>
-			<h4>3. Don't reveal detailed errors</h4>
-		</section>
-		<section>
-			<h4>We've seen how communication with the database is accomplished, and how to protect that communication. Click on <a href="query_strings.html">Query Strings</a> to learn about sending that data from the database to another page!</h4>
+		<section class="material">
+			<h3>3. Don't Reveal Detailed Errors</h3>
+			<p>
+				Even if you validate input and use prepared statements, you can still leak sensitive information if you
+				show
+				raw database or PHP error messages to users. Detailed errors can reveal:
+			</p>
+			<ul>
+				<li>Table and column names.</li>
+				<li>File paths on the server.</li>
+				<li>Pieces of SQL queries and internal logic.</li>
+			</ul>
+			<p>
+				Best practice:
+			</p>
+			<ul>
+				<li>Show users a friendly, generic error message like "Something went wrong. Please try again later."
+				</li>
+				<li>Log the detailed error message to a file or monitoring tool that only admins can see.</li>
+				<li>Disable <code>display_errors</code> in production and use <code>error_log()</code> instead.</li>
+			</ul>
 		</section>
 	</main>
 	<footer>&copy;2025 Daniela Luna</footer>
 </body>
+
 </html>

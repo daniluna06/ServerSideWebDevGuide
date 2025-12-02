@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<!--NAME: Daniela Luna-->
 	<meta charset="utf-8">
-	<title>Passing CSC465</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Passing CSC465 | Recursive Forms</title>
 	<link rel="stylesheet" href="../styles/main.css">
 	<link rel="stylesheet" href="../styles/print.css" media="print">
-	<link href="https://fonts.googleapis.com/css2?family=Original+Surfer&display=swap" rel="stylesheet">
 </head>
+
 <body>
 	<header>
 		<img src="../images/logo.png" alt="PHP Logo">
@@ -18,7 +20,6 @@
 		<ul>
 			<li><a href="../index.html">Home</a></li>
 			<li><a href="php_intro.html">PHP Intro</a></li>
-			<li><a href="forms.html">Forms</a></li>
 			<li><a href="form_processing.html">Form Processing</a></li>
 			<li><a href="external_files.html">External Files</a></li>
 			<li><a href="#" id="current">Recursive Forms</a></li>
@@ -28,14 +29,219 @@
 			<li><a href="query_strings.html">Query Strings</a></li>
 			<li><a href="pagination.html">Pagination</a></li>
 			<li><a href="cookies_and_sessions.html">Cookies and Sessions</a></li>
-			<li><a href="https.html">HTTPS</a></li>
+			<li><a href="file_uploads.html">File Uploads</a></li>
+			<li><a href="carts.html">Shopping Carts</a></li>
+			<li><a href="api.html">APIs</a></li>
+			<li><a href="../email/index.html">Join Email List</a></li>
 		</ul>
 	</nav>
 	<main>
 		<section>
 			<h2>Recursive Forms</h2>
+			<p>
+				A <strong>recursive form</strong> is a single PHP page that both <strong>displays</strong> the form and
+				<strong>processes</strong> it. Instead of having one page for the HTML and a second page for the
+				processing, everything happens in one script using conditionals.
+			</p>
+			<p>
+				This pattern makes it easier to validate input, redisplay the form with error messages, and eventually
+				make
+				the form "sticky" so users don't have to retype everything when they make a mistake.
+			</p>
+		</section>
+		<section class="material">
+			<h3>Two-Page Procedure vs. One Recursive Page</h3>
+			<p>
+				Traditional approach (two pages):
+			</p>
+			<ul>
+				<li><strong>Page 1:</strong> Displays the HTML form.</li>
+				<li><strong>Page 2:</strong> Processes the submitted data and shows a confirmation or errors.</li>
+			</ul>
+			<p>
+				Recursive approach (one page):
+			</p>
+			<ul>
+				<li>The same script decides whether to <strong>show the form</strong> or <strong>process the
+						data</strong>.</li>
+				<li>PHP checks "Was the form submitted?" and branches accordingly.</li>
+			</ul>
+			<pre><code>&lt;?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Form was submitted: validate and process
+} else {
+    // First visit (or direct hit): just display the form
+}
+?&gt;</code></pre>
+			<p>
+				This is called "recursive" because the page calls itself: the form's
+				<code>action</code> points back to the same script.
+			</p>
+		</section>
+		<section class="material">
+			<h3>Basic Structure of a Recursive Form Page</h3>
+			<p>
+				The "skeleton" for a recursive page usually looks like this:
+			</p>
+			<pre><code>&lt;?php
+$errors  = [];
+$missing = [];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // 1. Validate input
+    // 2. Add missing/invalid fields to $missing or $errors
+
+    if (empty($missing) &amp;&amp; empty($errors)) {
+        // 3. Process data
+        // 4. Output confirmation
+        // 5. Exit so the form is NOT redisplayed
+        exit;
+    }
+}
+// If we get here, either it's the first load OR there were errors.
+// Show the form (possibly with error messages and sticky values).
+?&gt;</code></pre>
+			<p>
+				When the form is submitted and passes validation, the script runs the "success" block and uses
+				<code>exit;</code> to stop the rest of the page from rendering.
+			</p>
+		</section>
+		<section class="material">
+			<h3>Tracking Missing &amp; Invalid Input</h3>
+			<p>
+				A common pattern is to use one or more associative arrays (like <code>$missing</code> or
+				<code>$errors</code>) to track problems with the form fields:
+			</p>
+			<pre><code>&lt;?php
+$missing = [];
+$errors  = [];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    // Example: required text field
+    $address = trim($_POST['address'] ?? '');
+    if ($address === '') {
+        $missing['address'] = 'Address is required.';
+    }
+
+    // Example: numeric field
+    $age = $_POST['age'] ?? '';
+    if ($age === '' || !is_numeric($age)) {
+        $errors['age'] = 'Please enter a valid numeric age.';
+    }
+
+    if (empty($missing) &amp;&amp; empty($errors)) {
+        // Process the valid data and exit
+        echo '&lt;h2&gt;Thank you! Your information was submitted.&lt;/h2&gt;';
+        exit;
+    }
+}
+?&gt;</code></pre>
+			<p>
+				After processing, you check whether <code>$missing</code> or <code>$errors</code> has anything in it. If
+				they're empty, you finish and exit. If not, you fall through and display the form again with messages.
+			</p>
+		</section>
+		<section class="material">
+			<h3>Example: Simple Recursive Contact Form</h3>
+			<pre><code>&lt;?php
+$missing = [];
+$errors  = [];
+
+// Process if submitted
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    // Name: required text
+    $name = trim($_POST['name'] ?? '');
+    if ($name === '') {
+        $missing['name'] = 'Name is required.';
+    }
+
+    // Email: required text
+    $email = trim($_POST['email'] ?? '');
+    if ($email === '') {
+        $missing['email'] = 'Email is required.';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = 'Please enter a valid email address.';
+    }
+
+    // Message: optional, but we could still trim/inspect it
+    $message = trim($_POST['message'] ?? '');
+
+    if (empty($missing) &amp;&amp; empty($errors)) {
+        // Normally: send email or insert into database
+        echo '&lt;h2&gt;Thanks, ' . htmlspecialchars($name) .
+             '! Your message has been received.&lt;/h2&gt;';
+        exit;
+    }
+}
+?&gt;
+
+&lt;h2&gt;Contact Us&lt;/h2&gt;
+
+&lt;?php if (!empty($missing) || !empty($errors)) : ?&gt;
+    &lt;p class="warning"&gt;Please fix the item(s) indicated below.&lt;/p&gt;
+&lt;?php endif; ?&gt;
+
+&lt;form action="recursive_contact.php" method="post"&gt;
+    &lt;p&gt;
+        &lt;label for="name"&gt;Name:&lt;/label&gt;
+        &lt;input type="text" name="name" id="name"
+               value="&lt;?= htmlspecialchars($name ?? '') ?&gt;"&gt;
+        &lt;?php if (!empty($missing['name'])) echo '&lt;span class="warning"&gt;' .
+                 $missing['name'] . '&lt;/span&gt;'; ?&gt;
+    &lt;/p&gt;
+
+    &lt;p&gt;
+        &lt;label for="email"&gt;Email:&lt;/label&gt;
+        &lt;input type="text" name="email" id="email"
+               value="&lt;?= htmlspecialchars($email ?? '') ?&gt;"&gt;
+        &lt;?php
+        if (!empty($missing['email'])) {
+            echo '&lt;span class="warning"&gt;' . $missing['email'] . '&lt;/span&gt;';
+        } elseif (!empty($errors['email'])) {
+            echo '&lt;span class="warning"&gt;' . $errors['email'] . '&lt;/span&gt;';
+        }
+        ?&gt;
+    &lt;/p&gt;
+
+    &lt;p&gt;
+        &lt;label for="message"&gt;Message:&lt;/label&gt;
+        &lt;textarea name="message" id="message"&gt;&lt;?=
+            htmlspecialchars($message ?? '')
+        ?&gt;&lt;/textarea&gt;
+    &lt;/p&gt;
+
+    &lt;p&gt;
+        &lt;input type="submit" value="Send"&gt;
+    &lt;/p&gt;
+&lt;/form&gt;</code></pre>
+			<p>
+				Notice that the top PHP block does all the processing and decides whether to show the confirmation (and
+				<code>exit</code>) or fall through to redisplay the form with messages and sticky values.
+			</p>
+		</section>
+		<section class="material">
+			<h3>exit() and the Footer</h3>
+			<p>
+				One important detail: once you call <code>exit;</code>, <strong>the rest of the page will not
+					render</strong>.
+				If your header and footer are in external files, you need to think about where you include them.
+			</p>
+			<ul>
+				<li>If you want the confirmation page to show the footer, output the footer <strong>before</strong> you
+					call
+					<code>exit;</code>.
+				</li>
+				<li>If there are multiple
+					"successful paths" (like pizza examples), you might have to include the footer
+					in
+					more than one place so both paths end with valid HTML.</li>
+			</ul>
 		</section>
 	</main>
+
 	<footer>&copy;2025 Daniela Luna</footer>
 </body>
+
 </html>

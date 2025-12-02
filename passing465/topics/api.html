@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<!--NAME: Daniela Luna-->
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Passing CSC465 | APIs</title>
+	<link rel="stylesheet" href="../styles/main.css">
+	<link rel="stylesheet" href="../styles/print.css" media="print">
+</head>
+
+<body>
+	<header>
+		<img src="../images/logo.png" alt="PHP Logo">
+		<h1>CSC465 For Dummies</h1>
+		<h3>A not-so-quick, and very extensive detailed guide</h3>
+	</header>
+	<nav>
+		<ul>
+			<li><a href="../index.html">Home</a></li>
+			<li><a href="php_intro.html">PHP Intro</a></li>
+			<li><a href="form_processing.html">Form Processing</a></li>
+			<li><a href="external_files.html">External Files</a></li>
+			<li><a href="recursive_forms.html">Recursive Forms</a></li>
+			<li><a href="sticky_forms.html">Sticky Forms</a></li>
+			<li><a href="security.html">Security</a></li>
+			<li><a href="php_sql.html">PHP x SQL</a></li>
+			<li><a href="query_strings.html">Query Strings</a></li>
+			<li><a href="pagination.html">Pagination</a></li>
+			<li><a href="cookies_and_sessions.html">Cookies and Sessions</a></li>
+			<li><a href="file_uploads.html">File Uploads</a></li>
+			<li><a href="carts.html">Shopping Carts</a></li>
+			<li><a href="api.html" id="current">APIs</a></li>
+			<li><a href="../email/index.html">Join Email List</a></li>
+		</ul>
+	</nav>
+	<main>
+		<section>
+			<h2>APIs</h2>
+			<p>
+				An <strong>Application Programming Interface (API)</strong> is a set of rules or protocols that let two
+				applications talk to each other. Instead of writing every feature from scratch, one program can call
+				another program's API to request data or trigger functionality.
+			</p>
+			<p>
+				In web development, APIs are often used to:
+			</p>
+			<ul>
+				<li>Get data from other systems (weather, maps, payments, etc.).</li>
+				<li>Reuse complex services (like payment processing) without reinventing the wheel.</li>
+				<li>Connect your PHP site to outside services and data sources.</li>
+			</ul>
+		</section>
+		<section class="material">
+			<h3>Types of Web APIs</h3>
+			<p>Common categories of web APIs you'll see in the wild:</p>
+			<ul>
+				<li><strong>Open APIs</strong> - publicly available, often with a free tier, but usually still require
+					an API key.</li>
+				<li><strong>Partner APIs</strong> - require a license or partnership and special rights to access.</li>
+				<li><strong>Private APIs</strong> - internal to a company; used by their own systems only.</li>
+				<li><strong>Composite APIs</strong> - combine multiple data/service APIs to speed up execution with a
+					single request.</li>
+			</ul>
+			<h4>API styles you'll encounter:</h4>
+			<ul>
+				<li><strong>SOAP</strong> (Simple Object Access Protocol)
+					<ul>
+						<li>Uses XML for request/response.</li>
+						<li>More rigid and verbose, more complicated to parse.</li>
+					</ul>
+				</li>
+				<li><strong>REST</strong> (Representational State Transfer)
+					<ul>
+						<li>Uses standard HTTP methods: <code>GET</code>, <code>POST</code>, <code>PUT</code>,
+							<code>PATCH</code>, <code>DELETE</code> for CRUD operations.
+						</li>
+						<li>Typically returns <strong>JSON</strong> (JavaScript Object Notation).</li>
+						<li>What you used with WeatherAPI.com.</li>
+					</ul>
+				</li>
+			</ul>
+		</section>
+		<section class="material">
+			<h3>JSON: The Language of REST APIs</h3>
+			<p>
+				<strong>JSON (JavaScript Object Notation)</strong> is the standard way REST APIs send data over the web.
+				It's:
+			</p>
+			<ul>
+				<li>Easy for humans to read and write.</li>
+				<li>Easy for machines to parse and generate.</li>
+				<li>Used to transmit data between a server and a web application (as an alternative to XML).</li>
+			</ul>
+
+			<h4>Basic JSON building blocks</h4>
+			<ol>
+				<li>
+					<strong>Objects</strong>
+					<ul>
+						<li>Enclosed in <code>{ }</code>.</li>
+						<li>Made of <strong>key/value pairs</strong>.</li>
+						<li>Keys are strings, values can be strings, numbers, objects, arrays, booleans, or
+							<code>null</code>.
+						</li>
+					</ul>
+				</li>
+				<li>
+					<strong>Arrays</strong>
+					<ul>
+						<li>Enclosed in <code>[ ]</code>.</li>
+						<li>Can contain multiple values of any type (including objects).</li>
+					</ul>
+				</li>
+				<li>
+					<strong>Values</strong>
+					<ul>
+						<li>Strings, numbers, objects, arrays, booleans, or <code>null</code>.</li>
+					</ul>
+				</li>
+			</ol>
+			<h4>Example JSON</h4>
+			<pre><code>{
+  "name": "John Doe",
+  "age": 30,
+  "isStudent": false,
+  "courses": ["Math", "Science", "History"],
+  "address": {
+    "street": "123 Main St",
+    "city": "Anytown",
+    "zipCode": "12345"
+  }
+}</code></pre>
+			<p>
+				When an API responds with JSON like this, PHP can decode it and let you access values like
+				<code>name</code>, <code>courses</code>, and <code>address-&gt;city</code>.
+			</p>
+		</section>
+		<section class="material">
+			<h3>Using an API: General Steps</h3>
+			<p>Most web APIs, including WeatherAPI.com, follow the same general workflow:</p>
+			<ol>
+				<li><strong>Register on the API website</strong> and create an account.</li>
+				<li><strong>Get an API key</strong> - a unique token that identifies your application.</li>
+				<li><strong>Read the documentation</strong> to learn:
+					<ul>
+						<li>What endpoint URLs you can call.</li>
+						<li>Which query string parameters are required (e.g., location, units, format).</li>
+						<li>How the response JSON is structured.</li>
+					</ul>
+				</li>
+				<li><strong>Construct the request URL</strong> with query strings, including your API key.
+					<ul>
+						<li>Example pattern: <br>
+							<code>http://api.weatherapi.com/v1/current.json?key=YOUR_KEY&amp;q=Tokyo</code>
+						</li>
+					</ul>
+				</li>
+				<li><strong>Send the request</strong> from your PHP script and get the JSON response.</li>
+				<li><strong>Decode the JSON</strong>, pull out the values you care about, and display them on your page.
+				</li>
+			</ol>
+		</section>
+		<section class="material">
+			<h3>Retrieving API Data with PHP</h3>
+			<p>
+				PHP gives you two key functions for working with REST APIs that return JSON:
+			</p>
+			<ul>
+				<li><code>file_get_contents()</code> - reads the contents of a URL or file into a string.</li>
+				<li><code>json_decode()</code> - converts a JSON-encoded string into a PHP value (object or array).</li>
+			</ul>
+
+			<h4>Basic pattern</h4>
+			<pre><code>// 1. Build the URL (with query string + API key)
+$apiUrl = "http://api.weatherapi.com/v1/current.json?key=YOUR_KEY&amp;q=Tokyo";
+
+// 2. Call the API and get the raw JSON response
+$response = file_get_contents($apiUrl);
+
+// 3. Decode the JSON into a PHP object
+$data = json_decode($response);
+
+// 4. Access fields using -&gt; because $data is an object
+$city      = $data-&gt;location-&gt;name;
+$tempf     = $data-&gt;current-&gt;temp_f;
+$condition = $data-&gt;current-&gt;condition-&gt;text;</code></pre>
+
+			<p>
+				<strong>Dot notation</strong> from JSON (like <code>location.name</code>) becomes <strong>arrow
+					notation</strong>
+				in PHP (<code>-&gt;location-&gt;name</code>), because decoded objects may have names that don’t fit
+				normal PHP
+				variable rules (like hyphens).
+			</p>
+		</section>
+		<section class="material">
+			<h3>Weather API Lab: Japan Weather Page</h3>
+			<p>
+				For a page that shows live weather for cities in Japan using WeatherAPI.com, the PHP file:
+			</p>
+			<ul>
+				<li>Reads a <strong>city</strong> from the query string (defaulting to Tokyo).</li>
+				<li>Builds a WeatherAPI <code>current.json</code> URL using that city and your API key.</li>
+				<li>Uses <code>file_get_contents()</code> and <code>json_decode()</code> to get the live data.</li>
+				<li>Displays temperature, feels-like, condition text, humidity, and an icon.</li>
+				<li>Includes a <strong>select list</strong> so the user can pick another Japanese city.</li>
+			</ul>
+
+			<h4>Key parts of the lab code</h4>
+			<pre><code>&lt;?php
+include 'includes/header.php';
+
+// 1. Get city from query string (default: Tokyo)
+if (isset($_GET['city'])) {
+    $selectedCity = $_GET['city'];
+} else {
+    $selectedCity = 'Tokyo';
+}
+
+// 2. Local date/time for Japan
+date_default_timezone_set('Asia/Tokyo');
+$currentTime = time();
+$localDate   = date("jS F, Y", $currentTime);
+$localTime   = date("l h:i A", $currentTime);
+
+// 3. Build the WeatherAPI URL
+$apiUrl = "http://api.weatherapi.com/v1/current.json?key=YOUR_KEY&amp;q=$selectedCity";
+
+// 4. Call the API and decode JSON
+$response      = file_get_contents($apiUrl);
+$data          = json_decode($response);
+$city          = $data-&gt;location-&gt;name;
+$tempf         = $data-&gt;current-&gt;temp_f;
+$humidity      = $data-&gt;current-&gt;humidity;
+$feelslikef    = $data-&gt;current-&gt;feelslike_f;
+$condition     = $data-&gt;current-&gt;condition-&gt;text;
+$conditionIcon = $data-&gt;current-&gt;condition-&gt;icon;
+?&gt;</code></pre>
+
+			<p>Then in the HTML portion, output the values:</p>
+			<pre><code>&lt;h2&gt;&lt;?php echo $city; ?&gt; Weather Status&lt;/h2&gt;
+&lt;h3&gt;Local Date: &lt;?php echo $localDate; ?&gt;&lt;/h3&gt;
+&lt;h3&gt;Local Time: &lt;?php echo $localTime; ?&gt;&lt;/h3&gt;
+
+&lt;h2&gt;Current Conditions&lt;/h2&gt;
+&lt;h3&gt;Temperature: &lt;?php echo $tempf; ?&gt; &amp;deg;F&lt;/h3&gt;
+&lt;h3&gt;Feels Like: &lt;?php echo $feelslikef; ?&gt; &amp;deg;F&lt;/h3&gt;
+&lt;h3&gt;Condition: &lt;?php echo $condition; ?&gt;&lt;/h3&gt;
+&lt;img src="&lt;?php echo $conditionIcon; ?&gt;" alt="Weather Icon"&gt;
+&lt;h3&gt;Humidity: &lt;?php echo $humidity; ?&gt;%&lt;/h3&gt;</code></pre>
+
+			<p>And a simple form lets the user choose a different city via the query string:</p>
+			<pre><code>&lt;form action="weather.php" method="get"&gt;
+    &lt;label for="city"&gt;&lt;/label&gt;
+    &lt;select name="city" id="city"&gt;
+        &lt;option value="" selected&gt;Find weather in another city in Japan:&lt;/option&gt;
+        &lt;option value="Kyoto"&gt;Kyoto&lt;/option&gt;
+        &lt;option value="Osaka"&gt;Osaka&lt;/option&gt;
+        &lt;option value="Yokohama"&gt;Yokohama&lt;/option&gt;
+        &lt;option value="Sapporo"&gt;Sapporo&lt;/option&gt;
+        &lt;option value="Tokyo"&gt;Tokyo&lt;/option&gt;
+    &lt;/select&gt;
+    &lt;input type="submit" value="Go"&gt;
+&lt;/form&gt;</code></pre>
+			<p>
+				This combines everything: query strings, API calls, JSON, and PHP output into one dynamic API-powered
+				page.
+			</p>
+		</section>
+		<section class="material">
+			<h3>Date &amp; Time Formatting for APIs</h3>
+			<p>
+				Many APIs include <strong>date and time</strong> information, or you may want to display the local time
+				for a
+				location (like you did for Tokyo).
+			</p>
+			<ul>
+				<li>Use <code>date_default_timezone_set()</code> to match the location.</li>
+				<li>Use <code>date()</code> with formatting codes to display readable dates and times.</li>
+				<li>The full list of PHP date/time format codes is available in the <strong>PHP manual</strong>.</li>
+			</ul>
+			<p>Example from your lab:</p>
+			<pre><code>date_default_timezone_set('Asia/Tokyo');
+$currentTime = time();
+$localDate   = date("jS F, Y", $currentTime);   // e.g., 27th November, 2025
+$localTime   = date("l h:i A", $currentTime);   // e.g., Thursday 03:15 PM</code></pre>
+		</section>
+		<section>
+			<p>
+				Together with everything you've learned- forms, validation, security, and database access- you now
+				have all the pieces to build dynamic, data-driven web apps that talk to the rest of the internet.
+			</p>
+		</section>
+	</main>
+
+	<footer>&copy;2025 Daniela Luna</footer>
+</body>
+
+</html>

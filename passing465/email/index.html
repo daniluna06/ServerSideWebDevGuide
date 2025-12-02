@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>Passing 465 | Subscribe</title>
+	<link rel="stylesheet" href="../styles/main.css">
+	<link rel="stylesheet" href="../styles/print.css" media="print">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+		main h2 {
+			text-align: center;
+			margin-bottom: 1.25rem;
+		}
+
+		form {
+			width: 90%;
+			margin: 0 auto;
+			background-color: #f8fcff;
+			border: 2px solid #A4C8D8;
+			border-radius: 1rem;
+			padding: 1.75rem 2rem 2.25rem;
+		}
+
+		label {
+			display: block;
+			margin-bottom: 0.25rem;
+			font-weight: 600;
+		}
+
+		input[type="text"],
+		input[type="email"] {
+			width: 90%;
+			padding: 0.45rem 0.6rem;
+			margin-bottom: 1rem;
+			border-radius: 0.5rem;
+			border: 1px solid #aac1ce;
+			font-size: 1rem;
+		}
+
+		input[type="text"]:focus,
+		input[type="email"]:focus {
+			outline: none;
+			border-color: #679cb6;
+			box-shadow: 0 0 0 2px rgba(103, 156, 182, 0.25);
+		}
+
+		input[type="submit"] {
+			display: block;
+			padding: 0.6rem 1.8rem;
+			font-size: 1rem;
+			font-weight: 600;
+			border-radius: 999px;
+			border: 2px solid #679cb6;
+			background: #A4C8D8;
+			color: #033244;
+		}
+
+		input[type="submit"]:hover,
+		input[type="submit"]:focus {
+			background-color: #679cb6;
+			color: #ffffff;
+			box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+		}
+
+		@media screen and (max-width: 420px) {
+			form {
+				width: 80%;
+				padding: 1rem 1.25rem 1.5rem;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<header>
+		<img src="../images/logo.png" alt="PHP Logo">
+		<h1>CSC465 For Dummies</h1>
+		<h3>A not-so-quick, and very extensive detailed guide</h3>
+	</header>
+	<nav>
+		<ul>
+			<li><a href="../index.html">Home</a></li>
+			<li><a href="../topics/php_intro.html">PHP Intro</a></li>
+			<li><a href="../topics/form_processing.html">Form Processing</a></li>
+			<li><a href="../topics/external_files.html">External Files</a></li>
+			<li><a href="../topics/recursive_forms.html">Recursive Forms</a></li>
+			<li><a href="../topics/sticky_forms.html">Sticky Forms</a></li>
+			<li><a href="../topics/security.html">Security</a></li>
+			<li><a href="../topics/php_sql.html">PHP x SQL</a></li>
+			<li><a href="../topics/query_strings.html">Query Strings</a></li>
+			<li><a href="../topics/pagination.html">Pagination</a></li>
+			<li><a href="../topics/cookies_and_sessions.html">Cookies and Sessions</a></li>
+			<li><a href="../topics/file_uploads.html">File Uploads</a></li>
+			<li><a href="../topics/carts.html">Shopping Carts</a></li>
+			<li><a href="../topics/api.html">APIs</a></li>
+			<li><a href="#" id="current">Join Email List</a></li>
+		</ul>
+	</nav>
+	<main>
+		<h2>Sign up for our mailing list!</h2>
+		<form name="subscribe" action="subscribe.html" method="get">
+			<label for="firstname">First name:</label>
+			<input type="text" name="firstName" id="firstname" required autofocus>
+
+			<label for="lastname">Last name:</label>
+			<input type="text" name="lastName" id="lastname" required>
+
+			<label for="email">Email:</label>
+			<input type="email" name="email" id="email" required>
+
+			<label for="zip">Zip code:</label>
+			<input type="text" name="zip" id="zip" placeholder="Optional but appreciated: 99999">
+
+			<input id="submit" type="submit" value="Subscribe">
+		</form>
+	</main>
+	<footer>&copy;2025 Daniela Luna</footer>
+	<script src="../js/subscribe.js"></script>
+</body>
+
+</html>

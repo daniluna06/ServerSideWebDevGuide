@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<!--NAME: Daniela Luna-->
 	<meta charset="utf-8">
-	<title>Passing CSC465</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Passing CSC465 | Form Processing</title>
 	<link rel="stylesheet" href="../styles/main.css">
 	<link rel="stylesheet" href="../styles/print.css" media="print">
-	<link href="https://fonts.googleapis.com/css2?family=Original+Surfer&display=swap" rel="stylesheet">
 </head>
+
 <body>
 	<header>
 		<img src="../images/logo.png" alt="PHP Logo">
@@ -18,7 +20,6 @@
 		<ul>
 			<li><a href="../index.html">Home</a></li>
 			<li><a href="php_intro.html">PHP Intro</a></li>
-			<li><a href="forms.html">Forms</a></li>
 			<li><a href="form_processing.html" id="current">Form Processing</a></li>
 			<li><a href="external_files.html">External Files</a></li>
 			<li><a href="recursive_forms.html">Recursive Forms</a></li>
@@ -28,14 +29,223 @@
 			<li><a href="query_strings.html">Query Strings</a></li>
 			<li><a href="pagination.html">Pagination</a></li>
 			<li><a href="cookies_and_sessions.html">Cookies and Sessions</a></li>
-			<li><a href="https.html">HTTPS</a></li>
+			<li><a href="file_uploads.html">File Uploads</a></li>
+			<li><a href="carts.html">Shopping Carts</a></li>
+			<li><a href="api.html">APIs</a></li>
+			<li><a href="../email/index.html">Join Email List</a></li>
 		</ul>
 	</nav>
 	<main>
 		<section>
 			<h2>Form Processing</h2>
+			<p>
+				Form processing is the heart of "dynamic" PHP pages. A user fills out an HTML form, the browser sends
+				the data to the server, and your PHP script <strong>validates, cleans, and uses</strong> that data (for
+				example:
+				saving to a database, sending an email, or showing a confirmation message).
+			</p>
+		</section>
+		<section class="material">
+			<h3>Request Methods &amp; Superglobals</h3>
+			<p>
+				Forms send data using either <strong>GET</strong> or <strong>POST</strong>. PHP receives that data in
+				<strong>superglobal arrays</strong>:
+			</p>
+			<ul>
+				<li><code>$_GET</code> - data from the URL query string (for example: <code>?name=Jim</code>).</li>
+				<li><code>$_POST</code> - data from the HTTP request body (most common for forms).</li>
+				<li><code>$_REQUEST</code> - combo of GET, POST, and COOKIE.</li>
+				<li><code>$_SERVER</code> - info about the request, including
+					<code>$_SERVER['REQUEST_METHOD']</code> (<code>"GET"</code> or <code>"POST"</code>).
+				</li>
+			</ul>
+			<p>
+				<strong>POST</strong> is preferred for form submissions because it can handle larger amounts of data
+				and
+				is more secure (data isn't visible in the URL). Use <strong>GET</strong> for simple searches or when
+				bookmarking results is useful.
+			</p>
+		</section>
+		<section class="material">
+			<h3>Basic Flow of Form Processing</h3>
+			<p>The typical pattern for a processing script:</p>
+			<ol>
+				<li>Check if the form was submitted.</li>
+				<li>Pull values out of <code>$_POST</code> (or <code>$_GET</code>).</li>
+				<li>Validate and sanitize the data:
+					<ul>
+						<li>Make sure required fields aren't empty.</li>
+						<li>Check types and formats (email, numbers, etc.).</li>
+						<li>Make sure values are acceptable (not negative, within range, etc.).</li>
+					</ul>
+				</li>
+				<li>If there are errors, redisplay the form with messages (and sticky values (more on this later)).</li>
+				<li>If everything is good, process the data (insert into the database, send email, show success page,
+					etc.).</li>
+			</ol>
+			<pre><code>&lt;?php
+$errors = [];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // 1. Get the values
+    $name  = trim($_POST['name'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+
+    // 2. Validate
+    if ($name === '') {
+        $errors['name'] = 'Please enter your name.';
+    }
+
+    if (empty($email)) {
+        $errors['email'] = 'Please enter an email address.';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = 'Please enter a valid email address.';
+    }
+
+    // 3. Process if no errors
+    if (!$errors) {
+        // process the data (for example, save to DB)
+    }
+}
+?&gt;</code></pre>
+		</section>
+		<section class="material">
+			<h3>HTML Form Example</h3>
+			<p>
+				Here's a simple registration-style form that sends data to <code>process_form.php</code> using
+				<code>POST</code>:
+			</p>
+			<pre><code>&lt;form action="process_form.php" method="post"&gt;
+    &lt;fieldset&gt;
+        &lt;legend&gt;Register:&lt;/legend&gt;
+
+        &lt;p&gt;
+            &lt;label for="name"&gt;Name:&lt;/label&gt;
+            &lt;input type="text" name="name" id="name"&gt;
+        &lt;/p&gt;
+
+        &lt;p&gt;
+            &lt;label for="email"&gt;Email:&lt;/label&gt;
+            &lt;input type="text" name="email" id="email"&gt;
+        &lt;/p&gt;
+
+        &lt;p&gt;
+            &lt;label for="age"&gt;Age:&lt;/label&gt;
+            &lt;input type="text" name="age" id="age"&gt;
+        &lt;/p&gt;
+
+        &lt;p&gt;
+            &lt;input type="submit" name="submit" value="Register"&gt;
+        &lt;/p&gt;
+    &lt;/fieldset&gt;
+&lt;/form&gt;
+</code></pre>
+			<p>
+				Notice how each control has a <strong>name</strong>. Those names become the keys in
+				<code>$_POST</code> or <code>$_GET</code> (for example: <code>$_POST['email']</code>).
+			</p>
+		</section>
+		<section class="material">
+			<h3>Processing the Form &amp; Basic Validation</h3>
+			<p>
+				This is a simple <code>process_form.php</code> that checks for submission, validates input, and shows a
+				success message or errors:
+			</p>
+			<pre><code>&lt;?php
+$errors = [];
+
+if (isset($_POST['submit']) &amp;&amp; $_POST['submit'] === 'Register') {
+
+    // Trim input
+    $name  = trim($_POST['name'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $age   = trim($_POST['age'] ?? '');
+
+    // Required text fields
+    if ($name === '') {
+        $errors['name'] = 'Name is required.';
+    }
+
+    if (empty($email)) {
+        $errors['email'] = 'Email is required.';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = 'Please enter a valid email address.';
+    }
+
+    // Numeric check
+    if ($age === '') {
+        $errors['age'] = 'Age is required.';
+    } elseif (!is_numeric($age)) {
+        $errors['age'] = 'Age must be a number.';
+    } elseif ($age &lt; 0) {
+        $errors['age'] = 'Age cannot be negative.';
+    }
+
+    if (!$errors) {
+        echo '&lt;h2&gt;Thanks, ' . htmlspecialchars($name) . '!&lt;/h2&gt;';
+        echo '&lt;p&gt;We have registered &lt;strong&gt;' .
+             htmlspecialchars($email) . '&lt;/strong&gt;.&lt;/p&gt;';
+        exit;
+    }
+}
+?&gt;</code></pre>
+		</section>
+		<section class="material">
+			<h3>Helper Functions for Form Validation</h3>
+			<p>Some very common PHP helpers for form processing:</p>
+			<ul>
+				<li><code>empty($var)</code> - <strong>TRUE</strong> if the variable is not set or is "empty"
+					(<code>""</code>, <code>0</code>, <code>null</code>, etc.).</li>
+				<li><code>isset($var)</code> - <strong>TRUE</strong> if the variable exists and is not
+					<code>null</code> (useful for radios, checkboxes, and submit buttons).
+				</li>
+				<li><code>is_numeric($var)</code> - <strong>TRUE</strong> if the value is a number or a numeric string
+					(can be safely converted).</li>
+				<li><code>filter_var($email, FILTER_VALIDATE_EMAIL)</code> - validates email format.</li>
+			</ul>
+			<p>
+				Typical pattern for a text box:
+			</p>
+			<pre><code>if (empty($_POST['address'])) {
+    $errors['address'] = 'Address is required.';
+} else {
+    $address = trim($_POST['address']);
+}</code></pre>
+			<p>
+				And for non-text (like a submit button or checkbox):
+			</p>
+			<pre><code>if (!isset($_POST['terms'])) {
+    $errors['terms'] = 'You must accept the terms.';
+}</code></pre>
+		</section>
+		<section class="material">
+			<h3>Arrays in Forms &amp; foreach Processing</h3>
+			<p>
+				Some form controls send <strong>arrays</strong>, especially multi-select lists and multiple checkboxes
+				with the same name.
+			</p>
+			<p>Example checkbox group for favorite toppings:</p>
+			<pre><code>&lt;label&gt;
+    &lt;input type="checkbox" name="toppings[]" value="mushrooms"&gt; Mushrooms
+&lt;/label&gt;
+&lt;label&gt;
+    &lt;input type="checkbox" name="toppings[]" value="olives"&gt; Olives
+&lt;/label&gt;
+&lt;label&gt;
+    &lt;input type="checkbox" name="toppings[]" value="onions"&gt; Onions
+&lt;/label&gt;</code></pre>
+			<p>
+				On submit, PHP receives <code>$_POST['toppings']</code> as an <strong>array</strong>, so you loop with
+				<code>foreach</code>:
+			</p>
+			<pre><code>if (!empty($_POST['toppings']) &amp;&amp; is_array($_POST['toppings'])) {
+    foreach ($_POST['toppings'] as $topping) {
+        echo htmlspecialchars($topping) . '&lt;br&gt;';
+    }
+}</code></pre>
 		</section>
 	</main>
 	<footer>&copy;2025 Daniela Luna</footer>
 </body>
+
 </html>

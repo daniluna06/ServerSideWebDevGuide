@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<!--NAME: Daniela Luna-->
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Passing CSC465 | Shopping Carts</title>
+	<link rel="stylesheet" href="../styles/main.css">
+	<link rel="stylesheet" href="../styles/print.css" media="print">
+</head>
+
+<body>
+	<header>
+		<img src="../images/logo.png" alt="PHP Logo">
+		<h1>CSC465 For Dummies</h1>
+		<h3>A not-so-quick, and very extensive detailed guide</h3>
+	</header>
+	<nav>
+		<ul>
+			<li><a href="../index.html">Home</a></li>
+			<li><a href="php_intro.html">PHP Intro</a></li>
+			<li><a href="form_processing.html">Form Processing</a></li>
+			<li><a href="external_files.html">External Files</a></li>
+			<li><a href="recursive_forms.html">Recursive Forms</a></li>
+			<li><a href="sticky_forms.html">Sticky Forms</a></li>
+			<li><a href="security.html">Security</a></li>
+			<li><a href="php_sql.html">PHP x SQL</a></li>
+			<li><a href="query_strings.html">Query Strings</a></li>
+			<li><a href="pagination.html">Pagination</a></li>
+			<li><a href="cookies_and_sessions.html">Cookies and Sessions</a></li>
+			<li><a href="file_uploads.html">File Uploads</a></li>
+			<li><a href="carts.html" id="current">Shopping Carts</a></li>
+			<li><a href="api.html">APIs</a></li>
+			<li><a href="../email/index.html">Join Email List</a></li>
+		</ul>
+	</nav>
+	<main>
+		<section>
+			<h2>Shopping Carts &amp; E-Commerce</h2>
+			<p>
+				Electronic commerce (<strong>e-commerce</strong>) is more than just "add to cart" buttons. It involves:
+			</p>
+			<ul>
+				<li>Online shopping (retail to consumer) and marketplaces</li>
+				<li>Electronic funds transfer and payment processing</li>
+				<li>Inventory management and order tracking</li>
+				<li>Internet marketing and data collection</li>
+			</ul>
+		</section>
+		<section class="material">
+			<h3>The Developer Perspective</h3>
+			<p>From the developer's point of view, an e-commerce site typically includes:</p>
+			<ul>
+				<li>The <strong>product database</strong> (tables for products/images, prices, details, etc.).</li>
+				<li>Admin tools for:
+					<ul>
+						<li>Adding products.</li>
+						<li>Editing or deleting products.</li>
+						<li>Completing orders or updating order status.</li>
+					</ul>
+				</li>
+				<li>Public-facing pages for:
+					<ul>
+						<li>Listing products (catalog view).</li>
+						<li>Showing <strong>product details</strong> for one item.</li>
+						<li>Creating and managing a <strong>shopping cart</strong>.</li>
+						<li>Checking inventory and storing orders.</li>
+					</ul>
+				</li>
+			</ul>
+		</section>
+		<section class="material">
+			<h3>Admin Side: Product List &amp; Details</h3>
+			<p>
+				On the <strong>admin side</strong>, a secure login protects a menu that includes links for things like:
+			</p>
+			<ul>
+				<li>Add a product (add a new image/print).</li>
+				<li>View or complete an order.</li>
+			</ul>
+			<p>
+				On the <strong>public side</strong>, users see:
+			</p>
+			<ul>
+				<li><code>product_list.php</code> - queries the database and displays a list (or gallery) of products.
+				</li>
+				<li>Next to each product, a <strong>View Details</strong> button or link.</li>
+			</ul>
+			<p>
+				The "View Details" button is usually an HTML form with a <strong>hidden field</strong> for the product's
+				primary key (like <code>image_id</code>):
+			</p>
+			<pre><code>&lt;form action="cart.php" method="get"&gt;
+    &lt;input type="hidden" name="action" value="details"&gt;
+    &lt;input type="hidden" name="image_id" value="&lt;?php echo $row['image_id']; ?&gt;"&gt;
+    &lt;input type="submit" value="View Details"&gt;
+&lt;/form&gt;</code></pre>
+			<p>
+				Because this form is inside a loop, each product row gets its own button, and the hidden
+				<code>image_id</code> value matches that specific image.
+			</p>
+			<p>
+				On <code>product_details.php</code>, you retrieve that ID with <code>$_GET</code> and query the database
+				to show the full info for that product.
+			</p>
+		</section>
+		<section class="material">
+			<h3>The Shopping Cart in $_SESSION</h3>
+			<p>
+				Once the catalog is in place, the shopping cart lives in <strong>sessions</strong>:
+				<code>$_SESSION['cart']</code>
+			</p>
+			<p>
+				The cart is a <strong>multi-dimensional array</strong> where each key is an <code>$imgID</code>, and the
+				value is another array with details:
+			</p>
+			<pre><code>$_SESSION['cart'][$imgID]['caption']  // print caption
+$_SESSION['cart'][$imgID]['quantity'] // quantity ordered
+$_SESSION['cart'][$imgID]['price']    // price of one item</code></pre>
+			<p>Conceptually, it looks like this:</p>
+			<pre><code>$_SESSION['cart'] = [
+    2 =&gt; [ 'caption' =&gt; 'Fountains in central Tokyo',
+           'quantity' =&gt; 1,
+           'price'   =&gt; 59.99 ],
+    3 =&gt; [ 'caption' =&gt; 'The Golden Pavilion in Kyoto',
+           'quantity' =&gt; 2,
+           'price'   =&gt; 9.99 ]
+];</code></pre>
+			<p>
+				If you wanted, you could nest this under a user ID (for example,
+				<code>$_SESSION['userid']['cart']</code>), but JJ keeps it at <code>$_SESSION['cart']</code>.
+			</p>
+		</section>
+		<section class="material">
+			<h3>cart.php - Central Cart Controller</h3>
+			<p>
+				The file <code>cart.php</code> is the <strong>controller</strong> for the shopping cart. It:
+			</p>
+			<ul>
+				<li>Starts the session and initializes <code>$_SESSION['cart']</code> if it doesn't exist.</li>
+				<li>Determines what <strong>action</strong> to take based on <code>$_GET['action']</code> or
+					<code>$_POST['action']</code>.
+				</li>
+				<li>Performs that action (add/update/show/empty) and then includes <code>cart_view.php</code> as needed.
+				</li>
+			</ul>
+			<p>In your JJ code, the valid actions are:</p>
+			<ul>
+				<li><code>'details'</code> - show <code>product_details.php</code>.</li>
+				<li><code>'add'</code> - add an item to the cart.</li>
+				<li><code>'update'</code> - update quantities in the cart.</li>
+				<li><code>'show_cart'</code> - just display the cart.</li>
+				<li><code>'empty_cart'</code> - clear the cart from the session.</li>
+			</ul>
+			<p>Typical pattern at the top of <code>cart.php</code>:</p>
+			<pre><code>// Start session and ensure cart exists
+session_start();
+if (!isset($_SESSION['cart'])) {
+    $_SESSION['cart'] = [];
+}
+
+// Determine action
+if (isset($_GET['action'])) {
+    $action = $_GET['action'];
+} elseif (isset($_POST['action'])) {
+    $action = $_POST['action'];
+} else {
+    $action = 'show_add_item'; // default
+}</code></pre>
+			<p>Then a <code>switch</code> statement uses <code>$action</code> to decide what to do.</p>
+		</section>
+		<section class="material">
+			<h3>Adding Items to the Cart (Action: add)</h3>
+			<p>
+				When the user clicks <strong>Add to Cart</strong> on <code>product_details.php</code>, a form posts data
+				like:
+			</p>
+			<ul>
+				<li><code>image_id</code></li>
+				<li><code>quantity</code></li>
+				<li><code>action = "add"</code></li>
+			</ul>
+			<p>
+				In <code>cart.php</code>, the <code>'add'</code> action:
+			</p>
+			<ol>
+				<li>Sanitizes the posted <code>image_id</code> and <code>quantity</code>.</li>
+				<li>Checks if the item is already in the cart:
+					<ul>
+						<li>If yes → just bump up the quantity.</li>
+						<li>If no → look up the image in the <code>JJ_images</code> table and add a new cart row.</li>
+					</ul>
+				</li>
+				<li>Includes <code>cart_view.php</code> to show the updated cart.</li>
+			</ol>
+			<pre><code>$imgID = filter_var($_POST['image_id'], FILTER_SANITIZE_NUMBER_INT);
+$qty   = filter_var($_POST['quantity'], FILTER_SANITIZE_NUMBER_INT);
+
+if (isset($_SESSION['cart'][$imgID])) {
+    // Already in cart - just update quantity
+    $_SESSION['cart'][$imgID]['quantity'] += $qty;
+} else {
+    // New item - look it up in JJ_images
+    require_once '../../pdo_connect.php';
+    $getImage = "SELECT * FROM JJ_images WHERE image_id = ?";
+    $stmt     = $dbc-&gt;prepare($getImage);
+    $stmt-&gt;bindParam(1, $imgID);
+    $stmt-&gt;execute();
+
+    if ($stmt-&gt;rowCount() == 1) {
+        $item     = $stmt-&gt;fetch();
+        $imgTitle = $item['caption'];
+        $imgPrice = $item['price'];
+
+        $_SESSION['cart'][$imgID]['caption']  = $imgTitle;
+        $_SESSION['cart'][$imgID]['quantity'] = $qty;
+        $_SESSION['cart'][$imgID]['price']    = $imgPrice;
+    } else {
+        // handle invalid ID
+    }
+}</code></pre>
+		</section>
+		<section class="material">
+			<h3>Updating Quantities &amp; Emptying the Cart</h3>
+			<p>
+				The <strong>update</strong> action happens when the user submits the cart form on
+				<code>cart_view.php</code> after changing quantities.
+			</p>
+			<p>
+				Each quantity input is named <code>newqty[imgID]</code>, so when the form is submitted you get an array:
+			</p>
+			<pre><code>$_POST['newqty'] = [
+    2 =&gt; 1,
+    3 =&gt; 0,
+    5 =&gt; 4
+];</code></pre>
+			<p>
+				In <code>cart.php</code>, the <code>'update'</code> case loops over this array:
+			</p>
+			<ul>
+				<li>If a quantity is <strong>0 or less</strong> → remove that item from the cart.</li>
+				<li>Otherwise → update <code>$_SESSION['cart'][$imgID]['quantity']</code> to the new value.</li>
+			</ul>
+
+			<pre><code>$new_qty_list = filter_var($_POST['newqty'],
+    FILTER_DEFAULT,
+    FILTER_REQUIRE_ARRAY);
+
+foreach ($new_qty_list as $img =&gt; $qty) {
+    if ($_SESSION['cart'][$img]['quantity'] != $qty) {
+        $quantity = (int) $qty;
+        if ($quantity &lt;= 0) {
+            unset($_SESSION['cart'][$img]);
+        } else {
+            $_SESSION['cart'][$img]['quantity'] = $quantity;
+        }
+    }
+}</code></pre>
+
+			<p>
+				The <strong>empty_cart</strong> action simply clears the cart from the session and then shows the (now
+				empty) cart view:
+			</p>
+			<pre><code>unset($_SESSION['cart']);
+include('cart_view.php');</code></pre>
+		</section>
+		<section class="material">
+			<h3>cart_view.php - Displaying the Cart</h3>
+			<p>
+				<code>cart_view.php</code> is responsible for <strong>displaying</strong> the contents of
+				<code>$_SESSION['cart']</code>, recalculating totals, and providing a UI for updates:
+			</p>
+			<ul>
+				<li>If the cart is empty, show a friendly message and a link back to the product list.</li>
+				<li>If the cart has items:
+					<ul>
+						<li>Display a table with caption, price, quantity, and line total.</li>
+						<li>Show a <strong>Total</strong> row at the bottom.</li>
+						<li>Wrap everything in a form with <code>action="cart.php"</code> and
+							<code>action = "update"</code> as a hidden field.
+						</li>
+					</ul>
+				</li>
+			</ul>
+
+			<pre><code>&lt;?php require 'includes/header.php'; ?&gt;
+&lt;main&gt;
+    &lt;h2&gt;Your Cart&lt;/h2&gt;
+
+    &lt;?php if (empty($_SESSION['cart']) || !isset($_SESSION['cart'])) { ?&gt;
+        &lt;h2&gt;There are no products in your cart.&lt;/h2&gt;
+        &lt;h3&gt;Please use the Purchase Prints link to the left to shop.&lt;/h3&gt;
+    &lt;?php } else { 
+        $total = 0; ?&gt;
+
+        &lt;h4&gt;To remove an item from your cart, change its quantity to 0.&lt;/h4&gt;
+        &lt;form action="cart.php" method="post"&gt;
+            &lt;input type="hidden" name="action" value="update"&gt;
+            &lt;table&gt;
+                &lt;tr id="cart_header"&gt;
+                    &lt;th class="left"&gt;Image&lt;/th&gt;
+                    &lt;th class="right"&gt;Price&lt;/th&gt;
+                    &lt;th class="right"&gt;Quantity&lt;/th&gt;
+                    &lt;th class="right"&gt;Total&lt;/th&gt;
+                &lt;/tr&gt;
+
+                &lt;?php foreach ($_SESSION['cart'] as $img =&gt; $item) { ?&gt;
+                    &lt;tr&gt;
+                        &lt;td&gt;&lt;?php echo $item['caption']; ?&gt;&lt;/td&gt;
+                        &lt;td class="right"&gt;$&lt;?php echo $item['price']; ?&gt;&lt;/td&gt;
+                        &lt;td class="right"&gt;
+                            &lt;input type="number" class="cart_qty"
+                                   name="newqty[&lt;?php echo $img; ?&gt;]"
+                                   value="&lt;?php echo $item['quantity']; ?&gt;"&gt;
+                        &lt;/td&gt;
+                        &lt;?php
+                        if (!isset($item['quantity'])) {
+                            $item['quantity'] = 0;
+                        }
+                        $subtotal = $item['quantity'] * $item['price'];
+                        $total   += $subtotal;
+                        ?&gt;
+                        &lt;td class="right"&gt;$&lt;?php echo number_format($subtotal, 2); ?&gt;&lt;/td&gt;
+                    &lt;/tr&gt;
+                &lt;?php } ?&gt;
+
+                &lt;tr id="cart_footer"&gt;
+                    &lt;td class="right" colspan="3"&gt;&lt;strong&gt;Total:&lt;/strong&gt;&lt;/td&gt;
+                    &lt;td class="right"&gt;&lt;strong&gt;$&lt;?php echo number_format($total, 2); ?&gt;&lt;/strong&gt;&lt;/td&gt;
+                &lt;/tr&gt;
+
+                &lt;tr&gt;
+                    &lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;
+                    &lt;td&gt;&lt;input type="submit" name="submit" value="Update My Cart"&gt;&lt;/td&gt;
+                    &lt;td&gt;&lt;/td&gt;
+                &lt;/tr&gt;
+            &lt;/table&gt;
+        &lt;/form&gt;
+
+        &lt;p&gt;&lt;a href="product_list.php"&gt;Add Item&lt;/a&gt;&lt;/p&gt;
+        &lt;p&gt;&lt;a href="cart.php?action=empty_cart"&gt;Empty Cart&lt;/a&gt;&lt;/p&gt;
+        &lt;p&gt;Proceed to: &lt;a href="checkout.php"&gt;Checkout&lt;/a&gt;&lt;/p&gt;
+
+    &lt;?php } ?&gt;
+&lt;/main&gt;
+&lt;?php include 'includes/footer.php'; ?&gt;</code></pre>
+		</section>
+		<section class="material">
+			<h3>Other Cart Features</h3>
+			<p>
+				Once your cart is working with sessions and forms, you can layer on small convenience features:
+			</p>
+			<ul>
+				<li><strong>Add Item</strong> - a link back to <code>product_list.php</code> so users can keep shopping.
+				</li>
+				<li><strong>Empty Cart</strong> - a link to <code>cart.php?action=empty_cart</code> that clears just the
+					cart data while leaving the user logged in.</li>
+				<li><strong>Checkout</strong> - a link to <code>checkout.php</code> that uses the cart totals to build
+					an order.</li>
+			</ul>
+			<p>
+				Behind the scenes, it all comes down to:
+			</p>
+			<ul>
+				<li>Using <strong>sessions</strong> to persist cart state between pages.</li>
+				<li>Using <strong>associative arrays</strong> to store per-item data (caption, price, quantity).</li>
+				<li>Using <strong>HTML forms</strong> (with hidden fields &amp; arrays) to add, update, and clear items.
+				</li>
+			</ul>
+			<p>
+				From here, you're ready to connect this with <strong>orders</strong>, <strong>payments</strong>, and
+				eventually external <a href="api.html">APIs</a> for more advanced e-commerce workflows.
+			</p>
+		</section>
+	</main>
+
+	<footer>&copy;2025 Daniela Luna</footer>
+</body>
+
+</html>

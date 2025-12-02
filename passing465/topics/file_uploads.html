@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<!--NAME: Daniela Luna-->
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Passing CSC465 | File Uploads</title>
+	<link rel="stylesheet" href="../styles/main.css">
+	<link rel="stylesheet" href="../styles/print.css" media="print">
+</head>
+
+<body>
+	<header>
+		<img src="../images/logo.png" alt="PHP Logo">
+		<h1>CSC465 For Dummies</h1>
+		<h3>A not-so-quick, and very extensive detailed guide</h3>
+	</header>
+	<nav>
+		<ul>
+			<li><a href="../index.html">Home</a></li>
+			<li><a href="php_intro.html">PHP Intro</a></li>
+			<li><a href="form_processing.html">Form Processing</a></li>
+			<li><a href="external_files.html">External Files</a></li>
+			<li><a href="recursive_forms.html">Recursive Forms</a></li>
+			<li><a href="sticky_forms.html">Sticky Forms</a></li>
+			<li><a href="security.html">Security</a></li>
+			<li><a href="php_sql.html">PHP x SQL</a></li>
+			<li><a href="query_strings.html">Query Strings</a></li>
+			<li><a href="pagination.html">Pagination</a></li>
+			<li><a href="cookies_and_sessions.html">Cookies and Sessions</a></li>
+			<li><a href="file_uploads.html" id="current">File Uploads</a></li>
+			<li><a href="carts.html">Shopping Carts</a></li>
+			<li><a href="api.html">APIs</a></li>
+			<li><a href="../email/index.html">Join Email List</a></li>
+		</ul>
+	</nav>
+	<main>
+		<h2>File Uploads</h2>
+		<section class="material">
+			<h3>1. Basic Concepts</h3>
+			<ul>
+				<li><strong>User upload:</strong> A visitor selects a file on their computer and sends it to
+					your web server using an HTML form.</li>
+				<li><strong>Three main players:</strong>
+					<ul>
+						<li><strong>Browser (client):</strong> shows the form and sends the file.</li>
+						<li><strong>Web server:</strong> receives the file and stores it in a <em>temporary
+								directory</em>.</li>
+						<li><strong>PHP script:</strong> validates and processes the file (checks type/size,
+							renames it, resizes if needed, saves info to the database, etc.).</li>
+					</ul>
+				</li>
+				<li><strong>MIME (media) types:</strong> identify what kind of data a file or response is.
+					<ul>
+						<li>Examples: <code>text/html</code>, <code>image/jpeg</code>, <code>image/png</code>,
+							<code>text/css</code>, <code>video/mpeg</code>.
+						</li>
+						<li>They use the format <code>type/subtype</code>, e.g. <code>image/jpeg</code>.</li>
+						<li>Standardized by IANA (Internet Assigned Numbers Authority).</li>
+					</ul>
+				</li>
+				<li><strong>Why MIME types matter:</strong>
+					<ul>
+						<li>In HTTP responses: PHP uses <code>header("Content-Type: ...")</code> to tell the
+							browser what it's sending.</li>
+						<li>In uploads: PHP stores each file's MIME type in
+							<code>$_FILES['something']['type']</code>.
+						</li>
+						<li>In image handling: <code>getimagesize()</code> returns the image's MIME type and
+							dimensions.</li>
+					</ul>
+				</li>
+				<li><strong>Images:</strong> PHP can inspect images, resize them, create thumbnails, and serve
+					them securely (even if stored outside <code>public_html</code>).</li>
+				<li>If you understand the HTML form, <code>$_FILES</code>, file permissions, image functions,
+					and proxy scripts, you basically own file uploads.</li>
+			</ul>
+		</section>
+		<section class="material">
+			<h3>2. HTML &amp; Upload Mechanics</h3>
+			<ul>
+				<li><strong>Required form attributes:</strong>
+					<ul>
+						<li><code>method="post"</code> - file uploads use POST.</li>
+						<li><code>enctype="multipart/form-data"</code> - tells the browser to send files
+							correctly. Without this, file data is not sent properly.</li>
+					</ul>
+				</li>
+				<li><strong>File input element:</strong></li>
+			</ul>
+			<pre><code>&lt;form enctype="multipart/form-data" action="upload_image.php" method="post"&gt;
+&lt;label for="image"&gt;Upload image:&lt;/label&gt;
+&lt;input type="file" name="image" id="image"&gt;
+&lt;input type="submit" name="upload" value="Upload"&gt;
+&lt;/form&gt;
+</code></pre>
+			<ul>
+				<li><code>type="file"</code> creates the “Choose file/Browse” control.</li>
+				<li>The <strong>name attribute</strong> (e.g. <code>name="image"</code>) becomes the key used in
+					<code>$_FILES['image']</code> in PHP.
+				</li>
+				<li><strong>Optional size limit in HTML:</strong></li>
+			</ul>
+			<pre><code>&lt;input type="hidden" name="MAX_FILE_SIZE" value="3000000"&gt;
+</code></pre>
+			<ul>
+				<li>This can help generate specific upload error codes if the file is too large.</li>
+				<li><strong>Basic flow:</strong> user picks file > submits form > browser sends request > server
+					temporarily stores the file > PHP processes it.</li>
+			</ul>
+		</section>
+		<section class="material">
+			<h3>3. PHP $_FILES</h3>
+			<p>If your HTML has <code>&lt;input type="file" name="site_img"&gt;</code>, then PHP gives you a
+				superglobal array:</p>
+			<pre><code>$_FILES['site_img']['name']      // original filename on user machine
+$_FILES['site_img']['type']      // MIME type, e.g. "image/jpeg"
+$_FILES['site_img']['size']      // size in bytes
+$_FILES['site_img']['tmp_name']  // temporary path on server
+$_FILES['site_img']['error']     // error code (0 = OK)
+</code></pre>
+			<ul>
+				<li><strong>Error codes:</strong>
+					<ul>
+						<li><code>0</code> - No error, upload successful.</li>
+						<li><code>1</code> - File exceeds <code>upload_max_filesize</code> in
+							<code>php.ini</code>.
+						</li>
+						<li><code>2</code> - File exceeds <code>MAX_FILE_SIZE</code> in the HTML form.</li>
+						<li><code>3</code> - File was only partially uploaded.</li>
+						<li><code>4</code> - No file was uploaded.</li>
+						<li><code>6</code> - No temporary folder available.</li>
+						<li><code>7</code> - Unable to write to disk.</li>
+						<li><code>8</code> - File upload stopped.</li>
+						<li>Anything else = system error.</li>
+					</ul>
+				</li>
+				<li>Typical pattern: check <code>$_FILES['site_img']['error']</code> and show a clear message in
+					a <code>switch</code> block like in your sample script.</li>
+				<li>Only if <code>error === 0</code> do you proceed to validate and move the file.</li>
+			</ul>
+		</section>
+		<section class="material">
+			<h3>4. Moving Files &amp; Permissions</h3>
+			<ul>
+				<li><strong>Moving the uploaded file:</strong></li>
+			</ul>
+			<pre><code>$filename    = $_FILES['site_img']['name'];
+$destination = "images/$filename";
+
+if (move_uploaded_file($_FILES['site_img']['tmp_name'], $destination)) {
+// Success: file now lives in images/
+}
+</code></pre>
+			<ul>
+				<li><code>move_uploaded_file()</code> is safer than plain <code>copy()</code> for uploads and
+					checks that the source is a valid uploaded file.</li>
+				<li><strong>Unix permission patterns:</strong> <code>-rw-rw-r--</code> shows owner/group/public
+					permissions.</li>
+				<li>Upload destination folders must be <strong>writable</strong> by the web server user, often
+					using permissions like <code>777</code> (<code>rwxrwxrwx</code>), which is why upload
+					folders are a security risk if misused.</li>
+				<li><strong>Public files (HTML/PHP):</strong> do <em>not</em> need write for public; they just
+					need read (<code>r</code>).</li>
+				<li>To reduce risk, store user uploads <strong>outside</strong> of <code>public_html</code> and
+					use PHP to control how they're accessed.</li>
+			</ul>
+		</section>
+		<section class="material">
+			<h3>5. Images &amp; Resizing</h3>
+			<ul>
+				<li><strong><code>getimagesize()</code>:</strong> returns an array with:
+					<ul>
+						<li><code>[0]</code> - width in pixels</li>
+						<li><code>[1]</code> - height in pixels</li>
+						<li><code>[2]</code> - integer type code</li>
+						<li><code>[3]</code> - ready-to-use <code>height="..." width="..."</code> string for an
+							<code>&lt;img&gt;</code> tag
+						</li>
+						<li><code>['mime']</code> - MIME type (e.g. <code>image/jpeg</code>)</li>
+					</ul>
+				</li>
+				<li><strong>Scaling to a maximum size (e.g., 350x350):</strong></li>
+			</ul>
+			<pre><code>if ($width &lt;= MAX_SIZE &amp;&amp; $height &lt;= MAX_SIZE) {
+$ratio = 1;
+} elseif ($width &gt; $height) {
+$ratio = MAX_SIZE / $width;
+} else {
+$ratio = MAX_SIZE / $height;
+}
+
+$new_w = round($width * $ratio);
+$new_h = round($height * $ratio);
+</code></pre>
+			<ul>
+				<li>This keeps the <strong>aspect ratio</strong>, so the image doesn't look stretched.</li>
+				<li><strong>Creating image resources:</strong>
+					<ul>
+						<li><code>imagecreatefromgif()</code>, <code>imagecreatefrompng()</code>,
+							<code>imagecreatefromjpeg()</code> - load the original file.
+						</li>
+						<li><code>imagecreatetruecolor()</code> - create a new blank image of the target size.
+						</li>
+						<li><code>imagecopyresampled()</code> - copy and resize with good quality.</li>
+						<li><code>imagegif()</code>, <code>imagepng()</code>, <code>imagejpeg()</code> - save
+							the resized image to disk.</li>
+					</ul>
+				</li>
+				<li>Typical pattern:
+					<ol>
+						<li>Get dimensions and MIME type with <code>getimagesize()</code>.</li>
+						<li>Compute scaling ratio.</li>
+						<li>Create an image resource from the original.</li>
+						<li>Create a blank canvas (truecolor).</li>
+						<li>Use <code>imagecopyresampled()</code> to create the resized copy.</li>
+						<li>Save the copy to the correct folder (main image and/or thumbnail).</li>
+					</ol>
+				</li>
+			</ul>
+		</section>
+		<section class="material">
+			<h3>6. Proxy Script &amp; Headers</h3>
+			<ul>
+				<li><strong>Problem:</strong> Uploads stored in <code>/home/usr/uploads</code> are not directly
+					accessible via URL—this is intentional for security.</li>
+				<li><strong>Solution:</strong> a PHP <strong>proxy script</strong> (e.g.,
+					<code>show_image.php</code>) that:
+					<ul>
+						<li>Finds the requested file.</li>
+						<li>Sends correct HTTP headers (including MIME type and length).</li>
+						<li>Streams the file contents to the browser.</li>
+					</ul>
+				</li>
+				<li><strong>Key headers:</strong></li>
+			</ul>
+			<pre><code>$info = getimagesize($image);
+$fs   = filesize($image);
+
+header("Content-Type: {$info['mime']}\n");
+header("Content-Disposition: inline; filename=\"$name\"\n");
+header("Content-Length: $fs\n");
+</code></pre>
+			<ul>
+				<li><code>Content-Type</code> - tells the browser what kind of file this is (JPEG, PNG, etc.).
+				</li>
+				<li><code>Content-Disposition: inline</code> - display in the browser. (<code>attachment</code>
+					would force a download.)</li>
+				<li><code>Content-Length</code> - size in bytes.</li>
+				<li><strong>Important rule:</strong> all <code>header()</code> calls must come before any HTML
+					or echoed content.</li>
+				<li>On success, a pure proxy script doesn't output HTML at all- just headers + file data.</li>
+			</ul>
+		</section>
+		<section class="material">
+			<h3>7. JavaScript Integration</h3>
+			<ul>
+				<li><strong>Popup window function:</strong> open a popup window sized to each image.</li>
+			</ul>
+			<pre><code>function create_window(image, width, height) {
+width  = width + 10;
+height = height + 10;
+
+if (window.popup &amp;&amp; !window.popup.closed) {
+	window.popup.resizeTo(width, height);
+}
+
+let specs = "location=no,scrollbars=no,menubar=no,toolbar=no," +
+			"resizable=yes,left=0,top=0,width=" + width + ",height=" + height;
+
+let url = "show_image.php?image=" + image;
+
+popup = window.open(url, "ImageWindow", specs);
+popup.focus();
+}
+</code></pre>
+			<ul>
+				<li><strong>PHP's role:</strong> determine each image's filename, width, and height, then output
+					the proper link or event handler that calls <code>create_window()</code>.</li>
+				<li><strong>JavaScript's role:</strong>
+					<ul>
+						<li>Create/resize the popup window.</li>
+						<li>Load the proxy script URL (e.g. <code>show_image.php?image=filename.jpg</code>).
+						</li>
+						<li>Give focus to the popup so the user sees it on top.</li>
+					</ul>
+				</li>
+				<li>This shows how front-end JS and back-end PHP cooperate to display secure, dynamic content
+					from user uploads.</li>
+			</ul>
+		</section>
+		<section class="material">
+			<h3>8. Security</h3>
+			<ul>
+				<li><strong>Never trust user uploads:</strong> the file could contain malicious content, even if
+					the extension is <code>.jpg</code>.</li>
+				<li><strong>Steganography:</strong> hiding malicious code or data inside an image file.
+					Attackers can host "normal-looking" images that actually contain dangerous payloads.</li>
+				<li><strong>Safer storage strategy:</strong>
+					<ul>
+						<li>Store user uploads outside <code>public_html</code>.</li>
+						<li>Treat admin "site images" differently from untrusted user uploads.</li>
+						<li>Give upload directories carefully controlled permissions (write allowed only where
+							absolutely necessary).</li>
+					</ul>
+				</li>
+				<li><strong>Proxy script advantages:</strong>
+					<ul>
+						<li>Browser never accesses the file directly by path.</li>
+						<li>PHP can enforce rules: must be logged in, must own the file, must be an allowed MIME
+							type, etc.</li>
+					</ul>
+				</li>
+				<li><strong>Admin-only maintenance scripts:</strong> can:
+					<ul>
+						<li>Scan a user's upload folder with <code>scandir()</code>.</li>
+						<li>Delete files with <code>unlink()</code> and optionally remove the folder with
+							<code>rmdir()</code>.
+						</li>
+						<li>Delete associated records from the database so there are no "orphaned" entries.</li>
+					</ul>
+				</li>
+			</ul>
+		</section>
+	</main>
+	<footer>&copy;2025 Daniela Luna</footer>
+</body>
+
+</html>

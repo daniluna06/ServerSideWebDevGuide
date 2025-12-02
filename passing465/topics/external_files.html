@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<!--NAME: Daniela Luna-->
 	<meta charset="utf-8">
-	<title>Passing CSC465</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Passing CSC465 | External Files</title>
 	<link rel="stylesheet" href="../styles/main.css">
 	<link rel="stylesheet" href="../styles/print.css" media="print">
-	<link href="https://fonts.googleapis.com/css2?family=Original+Surfer&display=swap" rel="stylesheet">
 </head>
+
 <body>
 	<header>
 		<img src="../images/logo.png" alt="PHP Logo">
@@ -18,7 +20,6 @@
 		<ul>
 			<li><a href="../index.html">Home</a></li>
 			<li><a href="php_intro.html">PHP Intro</a></li>
-			<li><a href="forms.html">Forms</a></li>
 			<li><a href="form_processing.html">Form Processing</a></li>
 			<li><a href="#" id="current">External Files</a></li>
 			<li><a href="recursive_forms.html">Recursive Forms</a></li>
@@ -28,14 +29,126 @@
 			<li><a href="query_strings.html">Query Strings</a></li>
 			<li><a href="pagination.html">Pagination</a></li>
 			<li><a href="cookies_and_sessions.html">Cookies and Sessions</a></li>
-			<li><a href="https.html">HTTPS</a></li>
+			<li><a href="file_uploads.html">File Uploads</a></li>
+			<li><a href="carts.html">Shopping Carts</a></li>
+			<li><a href="api.html">APIs</a></li>
+			<li><a href="../email/index.html">Join Email List</a></li>
 		</ul>
 	</nav>
 	<main>
 		<section>
 			<h2>External Files</h2>
+			<p>
+				As your site grows, it becomes a pain to update the same header, navigation, or footer on
+				every single page. External files let you <strong>cut common pieces into separate files</strong> and
+				pop them into each page with PHP, so one change updates the whole site.
+			</p>
+		</section>
+		<section class="material">
+			<h3>Breaking a Page into Reusable Pieces</h3>
+			<p>
+				A typical site page can be split into three main parts:
+			</p>
+			<ul>
+				<li>Everything at the top of the page that is the same on all pages of the site. This
+					usually includes the DOCTYPE, the head section and the opening HTML elements</li>
+				<li> The part of the page that is unique to the page.</li>
+				<li>The bottom of the page that is the same on every page, usually the footer and closing HTML elements.
+				</li>
+			</ul>
+			<p>
+				With external files, you move the shared top into something like <code>header.php</code> and the shared
+				bottom into <code>footer.php</code>. Each content page then just requires those files and focuses on its
+				unique content.
+			</p>
+		</section>
+		<section class="material">
+			<h3>include(), require(), and Their _once Versions</h3>
+			<p>
+				PHP gives you functions to pull in external files:
+			</p>
+			<ul>
+				<li><code>include('file.php');</code> - if the file can't be found, PHP shows a warning but keeps
+					running.</li>
+				<li><code>require('file.php');</code> - if the file can't be found, PHP shows an error and stops the
+					script.</li>
+				<li><code>include_once()</code> / <code>require_once()</code> - same behavior, but only load the file
+					<strong>once</strong>, even if the statement is hit multiple times (useful for functions/classes).
+				</li>
+			</ul>
+			<p>
+				Common patterns for this class:
+			</p>
+			<ul>
+				<li><strong>header:</strong> usually uses <code>require()</code> because the page isn't very useful
+					without the header and nav.</li>
+				<li><strong>footer:</strong> often uses <code>include()</code> because the page can still function
+					without it.</li>
+				<li>If the file defines <strong>functions or classes</strong>, it's safer to use
+					<code>require_once()</code>.
+				</li>
+			</ul>
+		</section>
+		<section class="material">
+			<h3>How PHP Treats Included Files</h3>
+			<p>
+				When you call <code>include()</code> or <code>require()</code>, PHP behaves as if it:
+			</p>
+			<ol>
+				<li>Finds the external file.</li>
+				<li>Copies all its code.</li>
+				<li>Pastes that code <strong>right where</strong> the <code>include</code> / <code>require</code>
+					statement appears.</li>
+			</ol>
+		</section>
+		<section class="material">
+			<h3>File Structure &amp; Simple Example</h3>
+			<p>An example <code>index.php</code> might look like:</p>
+			<pre><code>&lt;?php
+require 'includes/header.php';
+?&gt;
+
+&lt;main&gt;
+    &lt;h2&gt;Welcome to Seahawk Pizza&lt;/h2&gt;
+    &lt;p&gt;Best slices in Wilmington.&lt;/p&gt;
+&lt;/main&gt;
+
+&lt;?php
+include 'includes/footer.php';
+?&gt;</code></pre>
+			<p>
+				The index file itself contains very little HTML, but once the header and footer are pulled in, the final
+				output is a complete HTML document.
+			</p>
+		</section>
+		<section class="material">
+			<h3>External Nav File &amp; Current Page Highlight</h3>
+			<p>
+				The navigation menu can also live in its own external file, which makes it easy to update links and
+				dynamically highlight the current page using <code>$_SERVER</code>.
+			</p>
+			<p>Example <code>includes/nav.php</code>:</p>
+			<pre><code>&lt;?php
+$current = basename($_SERVER['SCRIPT_NAME']);
+?&gt;
+&lt;nav&gt;
+    &lt;ul&gt;
+        &lt;li&gt;&lt;a href="index.php"
+               &lt;?php if ($current === 'index.php') echo 'id="current"'; ?&gt;&gt;Home&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="menu.php"
+               &lt;?php if ($current === 'menu.php') echo 'id="current"'; ?&gt;&gt;Menu&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="about.php"
+               &lt;?php if ($current === 'about.php') echo 'id="current"'; ?&gt;&gt;About Us&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/nav&gt;</code></pre>
+			<p>
+				Now the nav is centralized, and the <code>id="current"</code> styling updates automatically based on
+				which
+				page is being viewed.
+			</p>
 		</section>
 	</main>
 	<footer>&copy;2025 Daniela Luna</footer>
 </body>
+
 </html>

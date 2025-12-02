@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<!--NAME: Daniela Luna-->
 	<meta charset="utf-8">
-	<title>Passing CSC465</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Passing CSC465 | Sticky Forms</title>
 	<link rel="stylesheet" href="../styles/main.css">
 	<link rel="stylesheet" href="../styles/print.css" media="print">
-	<link href="https://fonts.googleapis.com/css2?family=Original+Surfer&display=swap" rel="stylesheet">
 </head>
+
 <body>
 	<header>
 		<img src="../images/logo.png" alt="PHP Logo">
@@ -18,7 +20,6 @@
 		<ul>
 			<li><a href="../index.html">Home</a></li>
 			<li><a href="php_intro.html">PHP Intro</a></li>
-			<li><a href="forms.html">Forms</a></li>
 			<li><a href="form_processing.html">Form Processing</a></li>
 			<li><a href="external_files.html">External Files</a></li>
 			<li><a href="recursive_forms.html">Recursive Forms</a></li>
@@ -28,14 +29,198 @@
 			<li><a href="query_strings.html">Query Strings</a></li>
 			<li><a href="pagination.html">Pagination</a></li>
 			<li><a href="cookies_and_sessions.html">Cookies and Sessions</a></li>
-			<li><a href="https.html">HTTPS</a></li>
+			<li><a href="file_uploads.html">File Uploads</a></li>
+			<li><a href="carts.html">Shopping Carts</a></li>
+			<li><a href="api.html">APIs</a></li>
+			<li><a href="../email/index.html">Join Email List</a></li>
 		</ul>
 	</nav>
 	<main>
 		<section>
-			<h2>Sticky Forms</h2>
+			<h2>Sticky Forms &amp; Safer Output</h2>
+			<p>
+				A <strong>sticky form</strong> remembers what the user already typed and re-displays those values when
+				there are validation errors. This makes the form friendlier because users don't have to re-enter correct
+				data just because they made one mistake.
+			</p>
+			<p>
+				Sticky forms are usually built on top of a recursive form page: the same PHP file displays
+				the form, validates input, redisplays errors, and (eventually) shows a confirmation.
+			</p>
+		</section>
+		<section class="material">
+			<h3>Making Inputs Sticky</h3>
+			<p>
+				The basic idea: when you redisplay the form, you <strong>echo back the submitted values</strong> into
+				the
+				form controls if they exist and are valid.
+			</p>
+			<ul>
+				<li><strong>Text inputs:</strong> use the <code>value</code> attribute.</li>
+				<li><strong>Textarea:</strong> put the value between the opening and closing tags.</li>
+				<li><strong>Radio buttons &amp; checkboxes:</strong> conditionally add <code>checked</code>.</li>
+				<li><strong>Select lists:</strong> conditionally add <code>selected</code> to the right option.</li>
+			</ul>
+			<pre><code>&lt;!-- Text input sticky pattern --&gt;
+&lt;input type="text" name="address"
+       value="&lt;?= htmlspecialchars($address ?? '') ?&gt;"&gt;
+
+&lt;!-- Textarea sticky pattern --&gt;
+&lt;textarea name="instructions"&gt;&lt;?=
+    htmlspecialchars($instructions ?? '')
+?&gt;&lt;/textarea&gt;</code></pre>
+		</section>
+		<section class="material">
+			<h3>Example: Sticky Text Input with Error Message</h3>
+			<p>
+				We can combine the <code>$missing</code> array with sticky output to show a message and refill the
+				input:
+			</p>
+			<pre><code>&lt;?php
+$missing = [];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $address = trim($_POST['address'] ?? '');
+
+    if ($address === '') {
+        $missing['address'] = 'Address is required.';
+    }
+
+    if (empty($missing)) {
+        echo '&lt;h2&gt;Thanks! Your pizza will be delivered to ' .
+             htmlspecialchars($address) . '.&lt;/h2&gt;';
+        exit;
+    }
+}
+?&gt;
+
+&lt;h2&gt;Pizza Order&lt;/h2&gt;
+
+&lt;?php if (!empty($missing['address'])) : ?&gt;
+    &lt;p class="warning"&gt;&lt;?= $missing['address'] ?&gt;&lt;/p&gt;
+&lt;?php endif; ?&gt;
+
+&lt;p&gt;
+    &lt;label for="address"&gt;Street Address:&lt;/label&gt;
+    &lt;input type="text" name="address" id="address"
+           value="&lt;?= htmlspecialchars($address ?? '') ?&gt;"&gt;
+&lt;/p&gt;</code></pre>
+		</section>
+		<section class="material">
+			<h3>Sticky Radio Buttons &amp; Select Lists</h3>
+			<p>
+				For <strong>radio buttons</strong>, you add <code>checked</code> when the submitted value matches:
+			</p>
+			<pre><code>&lt;!-- Sticky radio buttons for crust type --&gt;
+&lt;label&gt;
+    &lt;input type="radio" name="crust" value="hand"
+        &lt;?php if (isset($crust) &amp;&amp; $crust === 'hand') echo ' checked'; ?&gt;&gt;
+    Hand Tossed
+&lt;/label&gt;
+
+&lt;label&gt;
+    &lt;input type="radio" name="crust" value="thin"
+        &lt;?php if (isset($crust) &amp;&amp; $crust === 'thin') echo ' checked'; ?&gt;&gt;
+    Thin Crust
+&lt;/label&gt;</code></pre>
+			<p>
+				For <strong>select lists</strong>, you add <code>selected</code> to the matching option:
+			</p>
+			<pre><code>&lt;label for="cheese"&gt;Cheese Amount:&lt;/label&gt;
+&lt;select name="cheese" id="cheese"&gt;
+    &lt;option value="normal"
+        &lt;?php if (isset($cheese) &amp;&amp; $cheese === 'normal') echo ' selected'; ?&gt;&gt;
+        Normal Cheese
+    &lt;/option&gt;
+    &lt;option value="extra"
+        &lt;?php if (isset($cheese) &amp;&amp; $cheese === 'extra') echo ' selected'; ?&gt;&gt;
+        Extra Cheese
+    &lt;/option&gt;
+&lt;/select&gt;</code></pre>
+			<p>
+				Note: keep a space before <code>selected</code> or <code>checked</code>, or your rendered
+				HTML will look like <code>value="extra"selected</code>, which is invalid.
+			</p>
+		</section>
+		<section class="material">
+			<h3>Sticky Checkboxes with Arrays</h3>
+			<p>
+				When you use <code>name="toppings[]"</code>, PHP collects the checked values into an array (for example,
+				<code>$toppings</code>).
+				You can use <code>in_array()</code> to keep each box checked.
+			</p>
+			<pre><code>&lt;!-- Assume $toppings is an array from $_POST['toppings'] --&gt;
+&lt;label&gt;
+    &lt;input type="checkbox" name="toppings[]" value="pepperoni"
+        &lt;?php if (isset($toppings) &amp;&amp; in_array('pepperoni', $toppings)) echo ' checked'; ?&gt;&gt;
+    Pepperoni
+&lt;/label&gt;&lt;br&gt;
+
+&lt;label&gt;
+    &lt;input type="checkbox" name="toppings[]" value="mushrooms"
+        &lt;?php if (isset($toppings) &amp;&amp; in_array('mushrooms', $toppings)) echo ' checked'; ?&gt;&gt;
+    Mushrooms
+&lt;/label&gt;&lt;br&gt;
+
+&lt;label&gt;
+    &lt;input type="checkbox" name="toppings[]" value="olives"
+        &lt;?php if (isset($toppings) &amp;&amp; in_array('olives', $toppings)) echo ' checked'; ?&gt;&gt;
+    Olives
+&lt;/label&gt;</code></pre>
+		</section>
+		<section class="material">
+			<h3>Why Sticky Forms Need Cross-Site Scripting (XSS) Protection</h3>
+			<p>
+				When you redisplay user input in a sticky form, you're echoing <strong>exactly what the user
+					typed</strong>
+				back into the browser. If they type HTML or JavaScript, it can break your page or become a
+				<strong>cross-site scripting (XSS)</strong> attack.
+			</p>
+			<p>
+				To defend against this, always escape user data on output using functions like:
+			</p>
+			<ul>
+				<li><code>htmlspecialchars()</code> - converts <code>&amp;</code>, <code>'</code>, <code>"</code>,
+					<code>&lt;</code>, and <code>&gt;</code> into their safe HTML entities.
+				</li>
+				<li><code>htmlentities()</code> - converts all applicable characters into HTML entities (more
+					aggressive).
+				</li>
+				<li><code>strip_tags()</code> - removes all HTML and PHP tags from a string.</li>
+			</ul>
+			<pre><code>&lt;?php
+// Dangerous if $instructions contains &lt;script&gt;...&lt;/script&gt;
+echo "Special instructions: " . $instructions . "&lt;br&gt;";
+
+// Safer:
+echo "Special instructions: " .
+     htmlspecialchars($instructions) . "&lt;br&gt;";</code></pre>
+			<p>
+				With <code>htmlspecialchars()</code>, something like:
+				<code>&lt;script&gt;alert('Gotcha!');&lt;/script&gt;</code>
+				is rendered as harmless text instead of executable JavaScript.
+			</p>
+		</section>
+		<section class="material">
+			<h3>Sticky Forms Checklist</h3>
+			<p>When you build a sticky form, you should:</p>
+			<ul>
+				<li>Use a recursive page.</li>
+				<li>Collect errors and missing fields in arrays like <code>$missing</code> or <code>$errors</code>.</li>
+				<li>Redisplay the form if there are problems, with:
+					<ul>
+						<li>Clear error messages near the relevant inputs.</li>
+						<li>Sticky values in <code>value</code>, <code>textarea</code>, <code>checked</code>, and
+							<code>selected</code>.
+						</li>
+					</ul>
+				</li>
+				<li>Escape all user data with <code>htmlspecialchars()</code> before echoing it back.</li>
+			</ul>
 		</section>
 	</main>
+
 	<footer>&copy;2025 Daniela Luna</footer>
 </body>
+
 </html>

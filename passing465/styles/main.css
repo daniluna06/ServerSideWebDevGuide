@@ -15,33 +15,32 @@ body {
 	flex-wrap: wrap;
 }
 
+/* Header */
 header {
-	& img {
-		float: left;
-		max-width: 4.3rem;
-		padding: 0 1.5rem 0 1rem;
-	}
-
-	& h1 {
-		font-size: 230%;
-		text-indent: 1.5rem;
-		color: #003153;
-		margin: 0;
-	}
-
-	& h3 {
-		font-family: "Original Surfer", sans-serif;
-		font-size: 125%;
-		text-indent: 1.5rem;
-		color: #003153;
-		margin-top: 0;
-		font-style: italic;
-	}
-
 	flex: 100%;
-	background-image: linear-gradient(45deg, #A4C8D8 0%, #87CEEB 75%, #003153 100%);
+	background-color: #a4d9ee;
 }
 
+header img {
+	float: left;
+	max-width: 4rem;
+	padding: 0 1.5rem 0 1rem;
+}
+
+header h1 {
+	text-indent: 1.5rem;
+	color: #003153;
+	margin: 1rem 0 0 0;
+}
+
+header h3 {
+	text-indent: 1.5rem;
+	color: #003153;
+	margin-top: 0;
+	font-style: italic;
+}
+
+/* Navigation menu */
 nav {
 	width: 25%;
 }
@@ -80,23 +79,210 @@ nav a:active {
 	border-left-color: #003153;
 }
 
+/* Global image sizing */
+img {
+	max-width: 400px;
+	width: 100%;
+	height: auto;
+	display: block;
+	margin: 0.75rem auto;
+}
+
 main {
 	flex: 1 1 0;
-	display: block;
+	display: grid;
+	grid-template-columns: 1fr;
+	row-gap: 1rem;
+	min-width: 0;
 	color: #003153;
 	padding: 0.9375rem 1.562rem 1.5625rem 1.5625rem;
 	background-color: #F0F0F0;
-	/*grey*/
 }
 
+/* Card style for content sections and home page topics */
+.material {
+	background-color: #ffffff;
+	border-radius: 1rem;
+}
+
+/* Card headers */
+.material h3 {
+	margin: 0;
+	padding: 0.9rem 1.1rem;
+	background-image: linear-gradient(135deg,
+			#f9d5e5 0%,
+			#A4C8D8 35%,
+			#87CEEB 70%,
+			#003153 100%);
+	color: #ffffff;
+	font-size: 1rem;
+	font-weight: 700;
+}
+
+/* Everything inside .material except <h3> */
+section.material>*:not(h3) {
+	padding: 0.75rem 1.1rem 0.5rem 1.1rem;
+	font-size: 0.95rem;
+	background-color: #f9fbfd;
+}
+
+/* Home page topics card text */
+article.material p {
+	margin: 0.5rem 1rem;
+	font-size: 0.95rem;
+	color: #003153;
+}
+
+article.material p:last-child {
+	font-size: 0.9rem;
+	font-style: italic;
+}
+
+/* Lists inside cards */
+section.material ul,
+section.material ol {
+	margin: 0.35rem 0 0.5rem 1.1rem;
+	padding-left: 1.1rem;
+}
+
+section.material li {
+	margin-bottom: 0.25rem;
+}
+
+/* Code blocks – shared across all pages */
+pre {
+	background-color: #ffffff;
+	border-radius: 0.5rem;
+	padding: 0.6rem 0.75rem;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	border-left: 4px solid #f9d5e5;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
+}
+
+code {
+	font-family: "Courier New", monospace;
+	background-color: #ffeef6;
+	border-radius: 0.25rem;
+	padding: 0.05rem 0.2rem;
+}
+
+/* Table styling */
+table {
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+	border-collapse: collapse;
+	margin: 0.75rem 0 1rem;
+	background-color: #ffffff;
+	border-radius: 0.75rem;
+	overflow: hidden;
+	font-size: 0.9rem;
+}
+
+/* Table captions */
+table caption {
+	caption-side: top;
+	padding: 0.6rem 0.9rem 0.3rem;
+	font-weight: 700;
+	color: #003153;
+	text-align: left;
+}
+
+/* Table header row */
+table thead {
+	background-image: linear-gradient(135deg, #f9d5e5 0%, #A4C8D8 45%, #87CEEB 80%, #003153 100%);
+	color: #ffffff;
+}
+
+table th,
+table td {
+	padding: 0.6rem 0.75rem;
+	text-align: left;
+	vertical-align: top;
+}
+
+/* Divider lines only between rows */
+table tbody tr+tr td {
+	border-top: 1px solid #d0d7df;
+}
+
+/* Footer */
 footer {
 	clear: both;
-	background-color: #A4C8D8;
-	color: #FFF;
+	background-color: #a4d9ee;
 	padding: 0.9375rem;
 	width: 100%;
 	bottom: 0;
 	margin-bottom: 0;
 	font-size: 1rem;
 	font-weight: bold;
+}
+
+/***** Media Queries *****/
+
+@media screen and (max-width: 810px) {
+	nav {
+		width: 30%;
+	}
+
+	main {
+		width: 70%;
+		margin: 0;
+	}
+}
+
+@media screen and (max-width: 420px) {
+
+	body {
+		display: flex;
+		flex-direction: column;
+	}
+
+	header {
+		width: 100%;
+	}
+
+	header img {
+		max-width: 3rem;
+	}
+
+	header h1 {
+		font-size: 160%;
+		text-align: center;
+		text-indent: 0;
+		margin: 0.5rem 0 0 0;
+	}
+
+	header h3 {
+		font-size: 100%;
+		text-align: center;
+		text-indent: 0;
+		margin: 0.25rem 0 0.5rem 0;
+	}
+
+	nav,
+	main {
+		width: 100%;
+	}
+
+	main {
+		padding: 0.6rem 0.75rem 0.9rem 0.75rem;
+		margin: 0;
+	}
+
+	section,
+	table {
+		width: 90%;
+	}
+
+	pre,
+	code,
+	table,
+	th,
+	td {
+		overflow-wrap: anywhere;
+		word-break: break-word;
+	}
+
 }
